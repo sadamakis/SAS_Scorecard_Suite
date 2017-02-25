@@ -62,6 +62,11 @@ run;
 proc sort data=pt nodupkey force noequals;
 	by COL1;
 run; 
+data pt (drop= numrec);
+	set pt;
+	numrec+1;
+	if numrec=1 then col1 = col1 + 0.0000000001;
+run;
 %if %substr(&currvar_num., %length(&currvar_num.), 1)=0 or 
 %substr(&currvar_num., %length(&currvar_num.), 1)=1 or
 %substr(&currvar_num., %length(&currvar_num.), 1)=2 or
@@ -161,8 +166,8 @@ run;
 		format start end $80.;
 			set rank4 (rename=(end=end_old start=start_old /*fmtname=original_name*/));
 			label = strip(put(woe, 13.10));
-			end = strip(put(end_old, 32.8));
-			start = strip(put(start_old, 32.8));
+			end = strip(put(end_old, 32.10));
+			start = strip(put(start_old, 32.10));
 			original_name = "&currvar_num.";
 /*			if substr(original_name, length(original_name), 1) in ('0','1','2','3','4','5','6','7','8','9') then fmtname=cats(original_name,'z');*/
 /*			else fmtname = original_name;*/
