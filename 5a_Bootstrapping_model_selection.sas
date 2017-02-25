@@ -64,18 +64,18 @@ quit;
 /***********************************************************************************/
 /*Split data to development and validation*/
 proc sql;
-create table outdata.Modelling_data_boot (rename= (SamplingWeight=weight_var)) as 
+create table outdata.Modelling_data_boot as 
 select 
 	t1.*
-	, t2.m_date_active 
-from outdata.Numeric_vars_min_d as t1
-left join dmart.Apps_201503_accnum (keep= transact_id m_date_active) as t2
+	, t2.development_flag 
+from outdata.numeric_vars_min_d as t1
+left join outdata.Original_table_dev_val_split as t2
 on t1.transact_id = t2.transact_id
 ;
 quit;
-data outdata.Modelling_data_bt_development (drop= m_date_active) outdata.Modelling_data_bt_validation (drop= m_date_active);
-	set outdata.Modelling_data_boot;
-	if m_date_active<='01DEC2014'd then output outdata.Modelling_data_bt_development;
+data outdata.Modelling_data_bt_development (drop= development_flag) outdata.Modelling_data_bt_validation (drop= development_flag);
+	set outdata.Modelling_data;
+	if development_flag=1 then output outdata.Modelling_data_bt_development;
 	else output outdata.Modelling_data_bt_validation;
 run;
 /***********************************************************************************/
