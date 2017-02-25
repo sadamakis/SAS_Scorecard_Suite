@@ -82,7 +82,8 @@ weight_variable = weight, /*Name of weight variable in the input dataset. This s
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
-character_variables = char_vars_to_recode /*Name of the macro variable that contains all the character variables that will be used for modelling*/
+character_variables = char_vars_to_recode, /*Name of the macro variable that contains all the character variables that will be used for modelling*/
+character_contents = char_var_recode_contents /*Name of the table that contain the contents of the character variables from &input_table. dataset*/
 );
 %put &char_vars_to_recode.;
 %put %sysfunc(countw(&char_vars_to_recode.));

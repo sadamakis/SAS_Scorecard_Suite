@@ -184,9 +184,11 @@ weight_variable = weight, /*Name of weight variable in the input dataset. This s
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
-character_variables = char_var_levels /*Name of the macro variable that contains all the character variables that will be used for modelling*/
+character_variables = char_var_levels, /*Name of the macro variable that contains all the character variables that will be used for modelling*/
+character_contents = char_var_contents /*Name of the table that contain the contents of the character variables from &input_table. dataset*/
 );
-%put &char_var_levels.;
+%put The variables that will be transformed to WOE are: &char_var_levels.;
+%put %sysfunc(countw(&char_var_levels.)) variables will be transformed to WOE.;
 /*********************************************************************************/
 
 %number_of_levels(
@@ -262,10 +264,11 @@ weight_variable = weight, /*Name of weight variable in the input dataset. This s
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
-character_variables = character_variables_to_analyse /*Name of the macro variable that contains all the character variables that will be used for modelling*/
+character_variables = character_variables_to_analyse, /*Name of the macro variable that contains all the character variables that will be used for modelling*/
+character_contents = char_var_analyse_contents /*Name of the table that contain the contents of the character variables from &input_table. dataset*/
 );
-%put &character_variables_to_analyse.;
-%put %sysfunc(countw(&character_variables_to_analyse.));
+%put The variables that will be transformed to WOE are: &character_variables_to_analyse.;
+%put %sysfunc(countw(&character_variables_to_analyse.)) variables will be transformed to WOE.;
 /*********************************************************************************/
 
 /**************************************************************************/

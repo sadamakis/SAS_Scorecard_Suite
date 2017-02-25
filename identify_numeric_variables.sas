@@ -10,17 +10,23 @@ weight_variable, /*Name of weight variable in the input dataset. This should exi
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
-numeric_variables /*Name of the macro variable that contains all the numeric variables that will be used for modelling*/
+numeric_variables, /*Name of the macro variable that contains all the numeric variables that will be used for modelling*/
+numeric_contents /*Name of the table that contain the contents of the numeric variables from &input_table. dataset*/
 );
 %GLOBAL &numeric_variables.;
 
 %let &numeric_variables. = ;
 proc contents data=&input_table. (drop= &target_variable. &id_variable. &weight_variable.) noprint out=content_dset (keep=label name varnum TYPE);
 run;
+
+data &numeric_contents.;
+	set content_dset;
+	where TYPE=1;
+run;
+
 proc sql noprint;
 select name into :&numeric_variables. separated by ' '
-from content_dset
-where TYPE=1
+from &numeric_contents.
 ;
 quit;
 %mend identify_numeric_variables;

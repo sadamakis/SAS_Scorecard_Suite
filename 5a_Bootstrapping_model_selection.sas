@@ -90,7 +90,8 @@ weight_variable = weight, /*Name of weight variable in the input dataset. This s
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
-numeric_variables = num_variables /*Name of the macro variable that contains all the numeric variables that will be used for modelling*/
+numeric_variables = num_variables, /*Name of the macro variable that contains all the numeric variables that will be used for modelling*/
+numeric_contents = num_variables_contents /*Name of the table that contain the contents of the numeric variables from &input_table. dataset*/
 );
 %put &num_variables.;
 %put %sysfunc(countw(&num_variables.));
@@ -105,7 +106,8 @@ weight_variable = weight, /*Name of weight variable in the input dataset. This s
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
-character_variables = char_variables /*Name of the macro variable that contains all the character variables that will be used for modelling*/
+character_variables = char_variables, /*Name of the macro variable that contains all the character variables that will be used for modelling*/
+character_contents = char_variables_contents /*Name of the table that contain the contents of the character variables from &input_table. dataset*/
 );
 %put &char_variables.;
 %put %sysfunc(countw(&char_variables.));
