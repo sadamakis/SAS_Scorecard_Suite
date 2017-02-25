@@ -142,6 +142,7 @@ create table varclus_ttest_sum as
 select
 	cluster
 	, avg(minus_log_Probt) as avg_minus_log_Probt format 7.2
+	, avg(abs(tValue)) as avg_tValue format 7.2
 from &varclus_ttest.
 group by cluster
 ;
@@ -155,7 +156,10 @@ select
 	, t1.RSquareRatio
 	, t1.mean
 	, t1.standard_deviation
-	, minus_log_Probt/avg_minus_log_Probt as importance_weight format 7.2
+/*	,  minus_log_Probt/avg_minus_log_Probt */
+	,  case when minus_log_Probt is not null then minus_log_Probt/avg_minus_log_Probt 
+		else abs(tValue)/avg_tValue end 
+		as importance_weight format 7.2
 from &varclus_ttest. as t1
 left join varclus_ttest_sum as t2
 on t1.cluster = t2.cluster
