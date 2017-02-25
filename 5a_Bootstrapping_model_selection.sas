@@ -30,7 +30,6 @@ material. In addition, Sotirios Adamakis will provide no support for the materia
  - weight 
  - ID variable
  - predictors (both numerical and categorical)*/
-%let dmartpth = X:\Data_Mart\Analysis\Decision_Science\01_UK\Vanquis\Cards\02_Acquisitions\01_Model_Development\VB_UKCC_AF01\01_Database_Design;
 /*Set the path that contains the output tables from this code*/
 %let outpath = X:\Data_Mart\Analysis\Decision_Science\01_UK\Vanquis\Cards\02_Acquisitions\01_Model_Development\VB_UKCC_AF01\01_Database_Design\Productionise macros;
 /*********************************************************************************/
@@ -39,7 +38,6 @@ material. In addition, Sotirios Adamakis will provide no support for the materia
 
 options compress=yes;
 
-libname dmart "&dmartpth.";
 libname outdata "&outpath.";
 
 %include "&macros_path.\identify_numeric_variables.sas";
