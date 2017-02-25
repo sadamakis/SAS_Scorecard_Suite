@@ -58,6 +58,8 @@ filename output3a "&output_files.\3a_variable_reduction_and_recoding_output_%sys
 filename logout3a "&output_files.\3a_variable_reduction_and_recoding_log_%sysfunc(compress(%sysfunc(datetime(),datetime20.0),':')).log";
 proc printto print=output3a log=logout3a new;
 run;
+proc datasets lib=work kill nolist memtype=data;
+quit;
 
 /*********************************************************************************/
 %merge_two_tables(

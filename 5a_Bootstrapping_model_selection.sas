@@ -57,6 +57,9 @@ filename logout5a "&output_files.\5a_Bootstrapping_model_selection_log_%sysfunc(
 proc printto print=output5a log=logout5a new;
 run;
 
+proc datasets lib=work kill nolist memtype=data;
+quit;
+
 /*Split data to development and validation*/
 proc sql;
 create table outdata.Modelling_data_boot (rename= (SamplingWeight=weight_var)) as 

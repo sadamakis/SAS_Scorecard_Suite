@@ -53,6 +53,8 @@ filename output4a "&output_files.\4a_Model_building_one_sample_output_%sysfunc(c
 filename logout4a "&output_files.\4a_Model_building_one_sample_log_%sysfunc(compress(%sysfunc(datetime(),datetime20.0),':')).log";
 proc printto print=output4a log=logout4a new;
 run;
+proc datasets lib=work kill nolist memtype=data;
+quit;
 
 /*Split data to development and validation*/
 proc sql;
