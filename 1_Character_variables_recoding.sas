@@ -271,6 +271,23 @@ character_contents = char_var_analyse_contents /*Name of the table that contain 
 %put %sysfunc(countw(&character_variables_to_analyse.)) variables will be transformed to WOE.;
 /*********************************************************************************/
 
+%ivs_and_woe_table(
+/*********************************************************************************/
+/*Input*/
+input_dset = outdata.character_vars_rcd_iteration3, /*Name of the input dataset that contains the variables to be recoded, the target variable and the weight*/
+numeric_variables_list = , /*List of numeric variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
+character_variables_list = &character_variables_to_analyse. /*&character_variables_to_analyse.*/, /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
+target_variable = bad_flag, /*Name of the target variable*/
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset*/
+groups = 30, /*Number of binning groups for the numeric variables*/
+adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
+/*********************************************************************************/
+/*Output*/
+inf_val_outds = outdata.char_original_information_value, /*Dataset with all the information values*/
+woe_format_outds = outdata.char_original_woe_format_dataset, /*Dataset with the Weight of Evidence variables*/
+output_formatted_data = outdata.char_original_rcd_format_woe /*Original dataset, but with WOE variables instead of the original variables*/
+);
+
 /**************************************************************************/
 /**************************************************************************/
 /*Collapse levels using NOD_BIN macro*/
@@ -301,6 +318,39 @@ RL_woeadj = 0.5,  /* space = 0, or 0, or 0.5: Weight of evidence adjusted factor
 output_original_recode_summary = outdata.char_summary_recode, /*Output table that contains the original with the recoded variables summary (min, max)*/
 output_recode_summary = outdata.char_vars_recode, /*Output table that contains the code that is used to create the WOE variables from the recoded variables*/ 
 output_recode_data = outdata.char_vars_format_woe /*Output table that contains the data with the target variable with the WOE variables - this will be used for modelling*/
+);
+
+%identify_numeric_variables(
+/*********************************************************************************/
+/*Input*/
+input_table = outdata.char_vars_format_woe, /*Name of table that has the character variables*/
+target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
+id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+If there are no weights in the dataset then create a field with values 1 in every row*/
+/*********************************************************************************/
+/*Output*/
+numeric_variables = collapse_variables_woe, /*Name of the macro variable that contains all the numeric variables that will be used for modelling*/
+numeric_contents = collapse_woe_contents /*Name of the table that contain the contents of the numeric variables from &input_table. dataset*/
+);
+%put The variables after WOE transformation are: &collapse_variables_woe.;
+%put %sysfunc(countw(&collapse_variables_woe.)) variables WOE.;
+
+%ivs_and_woe_table(
+/*********************************************************************************/
+/*Input*/
+input_dset = outdata.char_vars_format_woe, /*Name of the input dataset that contains the variables to be recoded, the target variable and the weight*/
+numeric_variables_list = &collapse_variables_woe., /*List of numeric variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
+character_variables_list = , /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
+target_variable = bad_flag, /*Name of the target variable*/
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset*/
+groups = 30, /*Number of binning groups for the numeric variables*/
+adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
+/*********************************************************************************/
+/*Output*/
+inf_val_outds = outdata.clpse_original_information_value, /*Dataset with all the information values*/
+woe_format_outds = outdata.clpse_orignl_woe_format_dataset, /*Dataset with the Weight of Evidence variables*/
+output_formatted_data = outdata.clpse_orignl_rcd_format_woe /*Original dataset, but with WOE variables instead of the original variables*/
 );
 /**************************************************************************/
 /**************************************************************************/

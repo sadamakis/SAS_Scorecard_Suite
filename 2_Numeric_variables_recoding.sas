@@ -111,15 +111,39 @@ output_table = outdata.numeric_vars /*Name of table that will have the target va
 
 /*********************************************************************************/
 /*Select the variables that will be transformed to WOE*/
-proc sql noprint;
-select NAME into :numeric_variables_to_analyse separated by ' '
-from outdata.numeric_summary
-;
-quit;
-/*%let numeric_variables_to_analyse = ;*/
+%identify_numeric_variables(
+/*********************************************************************************/
+/*Input*/
+input_table = outdata.numeric_vars, /*Name of table that has the character variables*/
+target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
+id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+If there are no weights in the dataset then create a field with values 1 in every row*/
+/*********************************************************************************/
+/*Output*/
+numeric_variables = numeric_variables_to_analyse, /*Name of the macro variable that contains all the numeric variables that will be used for modelling*/
+numeric_contents = numeric_variables_contents /*Name of the table that contain the contents of the numeric variables from &input_table. dataset*/
+);
 %put &numeric_variables_to_analyse.;
 %put %sysfunc(countw(&numeric_variables_to_analyse.));
 /*********************************************************************************/
+
+%ivs_and_woe_table(
+/*********************************************************************************/
+/*Input*/
+input_dset = outdata.Numeric_vars, /*Name of the input dataset that contains the variables to be recoded, the target variable and the weight*/
+numeric_variables_list = &numeric_variables_to_analyse., /*List of numeric variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
+character_variables_list = , /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
+target_variable = bad_flag, /*Name of the target variable*/
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset*/
+groups = 30, /*Number of binning groups for the numeric variables*/
+adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
+/*********************************************************************************/
+/*Output*/
+inf_val_outds = outdata.numeric_information_value, /*Dataset with all the information values*/
+woe_format_outds = outdata.numeric_woe_format_dataset, /*Dataset with the Weight of Evidence variables*/
+output_formatted_data = outdata.numeric_vars_rcd_format_woe /*Original dataset, but with WOE variables instead of the original variables*/
+);
 
 %NOD_BIN_numeric_wrapper(
 /*********************************************************************************/
@@ -149,6 +173,39 @@ RL_woeadj = 0.5,  /* space = 0, or 0, or 0.5: Weight of evidence adjusted factor
 output_original_recode_summary = outdata.num_summary_recode, /*Output table that contains the original with the recoded variables summary (min, max)*/
 output_recode_summary = outdata.num_vars_recode, /*Output table that contains the code that is used to create the WOE variables from the recoded variables*/ 
 output_recode_data = outdata.num_vars_format_woe /*Output table that contains the data with the target variable with the WOE variables - this will be used for modelling*/
+);
+
+%identify_numeric_variables(
+/*********************************************************************************/
+/*Input*/
+input_table = outdata.num_vars_format_woe, /*Name of table that has the character variables*/
+target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
+id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+If there are no weights in the dataset then create a field with values 1 in every row*/
+/*********************************************************************************/
+/*Output*/
+numeric_variables = numeric_variables_woe, /*Name of the macro variable that contains all the numeric variables that will be used for modelling*/
+numeric_contents = numeric_woe_contents /*Name of the table that contain the contents of the numeric variables from &input_table. dataset*/
+);
+%put &numeric_variables_woe.;
+%put %sysfunc(countw(&numeric_variables_woe.));
+
+%ivs_and_woe_table(
+/*********************************************************************************/
+/*Input*/
+input_dset = outdata.num_vars_format_woe, /*Name of the input dataset that contains the variables to be recoded, the target variable and the weight*/
+numeric_variables_list = &numeric_variables_woe., /*List of numeric variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
+character_variables_list = , /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
+target_variable = bad_flag, /*Name of the target variable*/
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset*/
+groups = 30, /*Number of binning groups for the numeric variables*/
+adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
+/*********************************************************************************/
+/*Output*/
+inf_val_outds = outdata.numeric_woe_information_value, /*Dataset with all the information values*/
+woe_format_outds = outdata.numeric_format_dataset_woe, /*Dataset with the Weight of Evidence variables*/
+output_formatted_data = outdata.numeric_rcd_format_woe /*Original dataset, but with WOE variables instead of the original variables*/
 );
 
 proc printto;
