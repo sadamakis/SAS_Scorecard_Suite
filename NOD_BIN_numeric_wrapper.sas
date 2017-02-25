@@ -8,13 +8,13 @@
 input_dset = , /*Name of the input dataset that contains the variables we want to recode and the target variable*/
 target_variable = , /*Name of the target variable*/
 id_variable = , /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = , /*Name of weight variable in the input dataset. This should exist in the dataset.*/
 vars_list = , /*List of predictor variables that we want to transform to WOE*/
 recoded_var_prefix = , /*Prefix for recoded variables*/
 num_groups = , /*Maximum number of groups we will originally split the predictor variables*/
 NOD_BIN_macro = , /*Path to NOD_BIN macro*/
 /*************************************************************************************/
 /*Set Lund and Raimi parameters*/
-RL_weight = , /*Weight variable. If no weights, then use 1*/
 RL_method = , /*IV (collapse maximises Information Value) or LL (collapse maximises Log likelihood)*/
 RL_mode = , /*A (all pairs of levels are compared when collapsing) or J (only adjacent pairs of levels in the ordering of X are compared when collapsing)*/
 RL_miss = ,  /*Treat missing values for collapsing: MISS <other is noMISS> */
@@ -38,13 +38,13 @@ output_recode_data = /*Output table that contains the data with the target varia
 
 data input_table (drop = rnd reps);
 	set &input_dset.;
-	rnd = round(&RL_weight.);
+	rnd = round(&weight_variable.);
 	do reps = 1 to rnd;
 		output;
 	end;
 run;
 
-proc rank data=input_table (keep= &target_variable. &id_variable. &RL_weight. &vars_list.) 
+proc rank data=input_table (keep= &target_variable. &id_variable. &weight_variable. &vars_list.) 
 	out=rank1 groups = &num_groups.;
 	var &vars_list.;
 	ranks &recoded_var_prefix.1-&recoded_var_prefix.&varnum.;
@@ -75,7 +75,7 @@ run;
 DATASET =  rank1, /*Input dataset that contains the target and the predictor we want to collapse*/
 X =  &recoded_var_prefix.&iter., /*Name of the predictor we want to collapse*/
 Y =  &target_variable., /*Name of the target variable*/
-W =  &RL_weight.,  /*Weight variable. If no weights, then use 1*/
+W =  1,  /*Weight variable. If no weights, then use 1*/
 METHOD =  &RL_method.,  /*IV (collapse maximises Information Value) or LL (collapse maximises Log likelihood)*/
 MODE =  &RL_mode.,  /*A (all pairs of levels are compared when collapsing) or J (only adjacent pairs of levels in the ordering of X are compared when collapsing)*/
 MISS =  &RL_miss.,   /*Treat missing values for collapsing: MISS <other is noMISS> */
@@ -184,7 +184,7 @@ create table &output_recode_data. as
 select distinct
 	t1.&target_variable.
 	, t1.&id_variable. 
-	, t1.&RL_weight.
+	, t1.&weight_variable.
 	%do i = 1 %to &n_woe_variables.;
 	, t2.&&woe_variable_&i..
 	%end;

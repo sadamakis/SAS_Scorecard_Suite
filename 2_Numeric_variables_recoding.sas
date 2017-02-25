@@ -127,13 +127,13 @@ quit;
 input_dset = outdata.numeric_vars, /*Name of the input dataset that contains the variables we want to recode and the target variable*/
 target_variable = bad_flag, /*Name of the target variable*/
 id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset.*/
 vars_list = &numeric_variables_to_analyse., /*List of predictor variables that we want to transform to WOE*/
 recoded_var_prefix = num, /*Prefix for recoded variables*/
 num_groups = 30, /*Maximum number of groups we will originally split the predictor variables*/
 NOD_BIN_macro = &macros_path.\NOD_BIN_v13.sas, /*Path to NOD_BIN macro*/
 /*************************************************************************************/
 /*Set Lund and Raimi parameters*/
-RL_weight = SamplingWeight, /*Weight variable. If no weights, then use 1*/
 RL_method = IV, /*IV (collapse maximises Information Value) or LL (collapse maximises Log likelihood)*/
 RL_mode = J, /*A (all pairs of levels are compared when collapsing) or J (only adjacent pairs of levels in the ordering of X are compared when collapsing)*/
 RL_miss = MISS,  /*Treat missing values for collapsing: MISS <other is noMISS> */

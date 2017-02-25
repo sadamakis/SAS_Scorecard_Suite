@@ -5,12 +5,12 @@
 input_dset = , /*Name of the input dataset that contains the variables we want to recode and the target variable*/
 target_variable = , /*Name of the target variable*/
 id_variable = , /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = , /*Name of weight variable in the input dataset. This should exist in the dataset.*/
 vars_list = , /*List of predictor variables that we want to transform to WOE*/
 recoded_var_prefix = , /*Prefix for recoded variables*/
 NOD_BIN_macro = , /*NOD_BIN macro name with path*/
 /*************************************************************************************/
 /*Set Lund and Raimi parameters*/
-RL_weight = , /*Weight variable. If no weights, then use 1*/
 RL_method = , /*IV (collapse maximises Information Value) or LL (collapse maximises Log likelihood)*/
 RL_mode = , /*A (all pairs of levels are compared when collapsing) or J (only adjacent pairs of levels in the ordering of X are compared when collapsing)*/
 RL_miss = ,  /*Treat missing values for collapsing: MISS <other is noMISS> */
@@ -31,6 +31,14 @@ output_recode_data = /*Output table that contains the data with the target varia
 %include "&NOD_BIN_macro.";
 
 %let varnum = %sysfunc(countw(&vars_list.));
+
+data input_table (drop = rnd reps);
+	set &input_dset.;
+	rnd = round(&weight_variable.);
+	do reps = 1 to rnd;
+		output;
+	end;
+run;
 
 %do i = 1 %to &varnum.;
 %let current_variable = %scan(&vars_list.,&i.);;
@@ -68,7 +76,7 @@ data rank1 (drop=
 %scan(&temp_curr_variable., &i.) 
 %end;
 );
-	set &input_dset. (keep= &target_variable. &id_variable. &RL_weight. &vars_list.);
+	set input_table (keep= &target_variable. &id_variable. &weight_variable. &vars_list.);
 %do i = 1 %to &varnum.;
 /*%scan(&temp_recoded_variable., &i.) = compress(compress(compress(compress(compress(%scan(&temp_curr_variable., &i.)), ","), "."), "%"), "!");*/
 %scan(&temp_recoded_variable., &i.) = compress(compress(compress(%scan(&temp_curr_variable., &i.)), ","), "!");
@@ -85,7 +93,7 @@ run;
 DATASET =  rank1, /*Input dataset that contains the target and the predictor we want to collapse*/
 X =  &currvar., /*Name of the predictor we want to collapse*/
 Y =  &target_variable., /*Name of the target variable*/
-W =  &RL_weight.,  /*Weight variable. If no weights, then use 1*/
+W =  1,  /*Weight variable. If no weights, then use 1*/
 METHOD =  &RL_method.,  /*IV (collapse maximises Information Value) or LL (collapse maximises Log likelihood)*/
 MODE =  &RL_mode.,  /*A (all pairs of levels are compared when collapsing) or J (only adjacent pairs of levels in the ordering of X are compared when collapsing)*/
 MISS =  &RL_miss.,   /*Treat missing values for collapsing: MISS <other is noMISS> */
@@ -169,7 +177,7 @@ run;
 %put &&recode_&i..;
 %end;
 
-data &output_recode_data. (keep= &target_variable. &id_variable. &RL_weight.
+data rank_temp (keep= &target_variable. &id_variable. 
 	%do i = 1 %to &n_woe_variables.;
 	&&woe_variable_&i..
 	%end;
@@ -179,6 +187,25 @@ data &output_recode_data. (keep= &target_variable. &id_variable. &RL_weight.
 	&&recode_&i..
 	%end;
 run;
+
+proc sort data=rank_temp out=rank_temp_dst NODUPKEY;
+	by &id_variable.;
+run;
+
+proc sql;
+create table &output_recode_data. as 
+select distinct
+	t1.&target_variable.
+	, t1.&id_variable. 
+	, t1.&weight_variable.
+	%do i = 1 %to &n_woe_variables.;
+	, t2.&&woe_variable_&i..
+	%end;
+from &input_dset. as t1
+left join rank_temp_dst as t2
+on t1.&id_variable. = t2.&id_variable.
+;
+quit;
 
 proc sql noprint;
 	drop table &output_recode_summary._s;

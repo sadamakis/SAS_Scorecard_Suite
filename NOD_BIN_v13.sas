@@ -428,7 +428,7 @@ DATA mean_in; SET mean_out_0 nobs = num_levels end = eof;
       G = _freq_ - y; 
       B = y;
       %END;
-   if _n_ = 1 then call symput('num_levels',num_levels - 1); /*Subtracts 1 for _TYPE_=0*/
+   if _n_ = 1 then call symput('num_levels',trim(left(put((num_levels - 1),4.)))); /*Subtracts 1 for _TYPE_=0*/
    if _n_ = 1 then call symput('num_levels_minus1',num_levels - 2);
    if _n_ = 1 
    then
@@ -483,7 +483,7 @@ DATA ___mean_out; set mean_out;
    LABEL RatioGvB = "G/B";
    LABEL ___Temp = "&X";
 run;
-%IF %UPCASE(&MODE = A) %THEN %DO;
+%IF %UPCASE(&MODE) = A %THEN %DO;
 PROC SORT data = ___mean_out; by _type_ RatioGvB;
 %END;
 run;
@@ -500,7 +500,7 @@ title6 "&Y = 1 are displayed as G and &Y = 0 are displayed as B";
 %ELSE %DO;
 title6 "&Y = 0 are displayed as G and &Y = 1 are displayed as B";
 %END;
-%IF %UPCASE(&MODE = A) %THEN %DO;
+%IF %UPCASE(&MODE) = A %THEN %DO;
 title7 "Sorted by Ratio of G over B";
 %END;
 
@@ -784,8 +784,8 @@ DATA denorm; Set denorm end=eof;
    prior_Forced = Forced;
    
    %DO i = 1 %TO &num_levels;
-      Lx%cmpres(&i) = compress(translate(L%cmpres(&i),'','#'));
-      LABEL Lx%cmpres(&i) = "L%cmpres(&i)";
+      Lx&i = compress(translate(L&i,'','#'));
+      LABEL Lx&i = "L&i";
       %END;
    
    %IF %UPCASE(&MODE)=J & %UPCASE(&MISS)=MISS & &MISS_EXISTS=Y
@@ -815,7 +815,7 @@ var K forced_lag IV Minus2_LL X_STAT
 %THEN %DO;
    C_STAT MONOTONIC
    %END; 
-%IF &VERBOSE = YES %THEN Lx1 - Lx%cmpres(&num_levels); ;
+%IF &VERBOSE = YES %THEN Lx1 - Lx&num_levels; ;
 format IV X_STAT C_STAT missfmt.;
 title3 "Min_Pct = &MIN_PCT, Min_Num = &MIN_NUM, WOEADJ = &WOEADJ";
 title4 " ";
