@@ -85,7 +85,7 @@ modelling_data_development = outdata.Modelling_data_development, /*Development d
 modelling_data_validation = outdata.Modelling_data_validation, /*Validation data that will be used to validate the logistic regression model*/
 target_variable = bad_flag,  /*Name of target variable - leave blank if missing*/
 id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = SamplingWeight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 model_selection_method = stepwise, /*Choose from none, stepwise, backward, forward, score*/
 slentry = 0.05, /*Entry criteria for model selection method*/
@@ -113,11 +113,11 @@ outtable_model_build_summary = outdata.outtable_model_build_summary /*Model buil
 /*Input*/
 input_model_build_summary = outdata.outtable_model_build_summary, /*Model building summary dataset. This dataset is created when enabling 
 ModelBuildingSummary option in PROC LOGISTIC*/
-input_number_variables_in_model = 5, /*Number of variables that will be in the model.*/
+input_number_variables_in_model = 3, /*Number of variables that will be in the model.*/
 modelling_data_development = outdata.Modelling_data_development, /*Development data that will be used to create a logistic regression model*/
 modelling_data_validation = outdata.Modelling_data_validation, /*Validation data that will be used to validate the logistic regression model*/
 target_variable = bad_flag,  /*Name of target variable - leave blank if missing*/
-weight_variable = SamplingWeight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /***********************************************************************************/
 /*Output*/
@@ -184,6 +184,8 @@ proc gplot data=outdata.predicted_expected_outdset;
 	plot (target_actual_prob target_predicted_prob)*sscoreband / overlay legend=legend1 haxis=axis1 vaxis=axis2;
 	title "Scorecard performance";
 run;
+/*********************************************************************************/
+/*********************************************************************************/
 
 proc printto;
 run;

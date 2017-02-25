@@ -86,7 +86,7 @@ run;
 input_table = outdata.Modelling_data_bt_development, /*Name of table that has the character variables*/
 target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
 id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight_var, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -101,7 +101,7 @@ numeric_variables = num_variables /*Name of the macro variable that contains all
 input_table = outdata.Modelling_data_bt_development, /*Name of table that has the character variables*/
 target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
 id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight_var, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -119,8 +119,8 @@ modelling_data_validation = outdata.Modelling_data_bt_validation, /*Validation d
 LIMITATION: The table name should be up to 30 characters.*/
 target_variable = bad_flag,  /*Name of target variable - leave blank if missing*/
 id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight_var, /*Name of weight variable in the input dataset. This should exist in the dataset. 
-If there are no weights in the dataset then create a field with values 1 in every row. This should not be SamplingWeight, 
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+If there are no weights in the dataset then create a field with values 1 in every row. This should not be weight, 
 as this name is reserved in the macro*/
 varlist_cont = &num_variables., /*List of continuous variables that will go in the model*/
 varlist_disc = &char_variables., /*List of categorical variables that will go in the model*/
@@ -173,8 +173,8 @@ quit;
 modelling_data_development = outdata.Modelling_data_bt_development, /*Development data that will be used to create a logistic regression model*/
 modelling_data_validation = outdata.Modelling_data_bt_validation, /*Validation data that will be used to validate the logistic regression model*/
 target_variable = bad_flag,  /*Name of target variable - leave blank if missing*/
-weight_variable = weight_var, /*Name of weight variable in the input dataset. This should exist in the dataset. 
-If there are no weights in the dataset then create a field with values 1 in every row. This should not be SamplingWeight, 
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+If there are no weights in the dataset then create a field with values 1 in every row. This should not be weight, 
 as this name is reserved in the macro*/
 varlist_cont = &predictors_in_the_model., /*List of continuous variables that will go in the model*/
 varlist_disc = , /*List of categorical variables that will go in the model*/
@@ -212,7 +212,7 @@ predictors_coefficients_outtable = outdata.predictors_coeffcnts_smmry, /*Table t
 LIMITATION: The table name should be up to 30 characters.*/
 modelling_data_development = outdata.Modelling_data_bt_development, /*Development data that will be used to create a logistic regression model*/
 target_variable = bad_flag, /*Name of target variable*/
-weight_variable = weight_var, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -227,7 +227,7 @@ predictors_coefficients_outtable = outdata.predictors_coeffcnts_smmry, /*Table t
 LIMITATION: The table name should be up to 30 characters.*/
 modelling_data_development = outdata.Modelling_data_bt_validation, /*Development data that will be used to create a logistic regression model*/
 target_variable = bad_flag, /*Name of target variable*/
-weight_variable = weight_var, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -235,23 +235,14 @@ bootstrap_score_dataset = outdata.bootstrap_score_dataset_val, /*Dataset that co
 GINI_outdset = outdata.bootstrap_GINI_val /*Dataset that contains the Gini coefficient*/
 );
 
-%let target_variable = bad_flag;
-proc sql noprint;
-select count(*) into: nlobs
-from outdata.Modelling_data_bt_development
-where &target_variable. = 0
-;
-quit;
-%put &nlobs.;
-
 %bootstrap_coefficients_estimate(
 /*********************************************************************************/
 /*Input*/
 modelling_data_development = outdata.Modelling_data_bt_development, /*Development data that will be used to create a logistic regression model*/
 modelling_data_validation = outdata.Modelling_data_bt_validation, /*Validation data that will be used to validate the logistic regression model*/
 target_variable = bad_flag,  /*Name of target variable - leave blank if missing*/
-weight_variable = weight_var, /*Name of weight variable in the input dataset. This should exist in the dataset. 
-If there are no weights in the dataset then create a field with values 1 in every row. This should not be SamplingWeight, 
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+If there are no weights in the dataset then create a field with values 1 in every row. This should not be weight, 
 as this name is reserved in the macro*/
 varlist_cont = &predictors_in_the_model., /*List of continuous variables that will go in the model*/
 varlist_disc = , /*List of categorical variables that will go in the model*/
@@ -270,6 +261,8 @@ gini_outtable_validation = outdata.gini_outtable_validation_one, /*Table that st
 KS_outtable_development = outdata.KS_outtable_development_one, /*Table that stores the KS statistics for the development sample*/
 KS_outtable_validation = outdata.KS_outtable_validation_one /*Table that stores the KS statistics for the validation sample*/
 );
+/*********************************************************************************/
+/*********************************************************************************/
 
 proc printto;
 run;

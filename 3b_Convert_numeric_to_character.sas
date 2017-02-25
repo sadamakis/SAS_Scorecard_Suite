@@ -64,7 +64,7 @@ quit;
 /*Input*/
 input_dset = outdata.Numeric_vars_min_d, /*Input table that contains the numeric variables that should be converted to character*/
 target_variable = bad_flag, /*The name of the dependent variable (it should be binary)*/
-weight_variable = SamplingWeight, /*Name of weight variable in the input dataset. This should exist in the dataset.*/
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset.*/
 id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
 character_format = 13.10, /*Format inside the PUT statement*/
 /**************************************************************************/
@@ -78,7 +78,7 @@ output_dset = outdata.Numeric_vars_min_d_char /*Name of table that the numeric v
 input_table = outdata.Numeric_vars_min_d_char, /*Name of table that has the character variables*/
 target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
 id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = SamplingWeight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -93,7 +93,7 @@ character_variables = char_vars_to_recode /*Name of the macro variable that cont
 input_dset = outdata.Numeric_vars_min_d_char, /*Name of table that has the variables to be collapsed*/
 variables_to_recode = &char_vars_to_recode., /*List of variables that will be collapsed*/
 target_variable = bad_flag, /*The name of the dependent variable (it should be binary)*/
-weight_variable = SamplingWeight, /*Name of weight variable in the input dataset. This should exist in the dataset.*/
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset.*/
 /**************************************************************************/
 /*Output*/
 output_format_table = outdata.format_char_numeric, /*Table that contains the format information*/
@@ -107,7 +107,7 @@ input_dset = outdata.Numeric_vars_min_d_format, /*Name of the input dataset that
 numeric_variables_list = , /*List of numeric variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
 character_variables_list = &char_vars_to_recode. /*&character_variables_to_analyse.*/, /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
 target_variable = bad_flag, /*Name of the target variable*/
-weight_variable = SamplingWeight, /*Name of weight variable in the input dataset. This should exist in the dataset*/
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset*/
 groups = 30, /*Number of binning groups for the numeric variables*/
 adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
 /*********************************************************************************/
@@ -116,6 +116,8 @@ inf_val_outds = outdata.num_char_information_value, /*Dataset with all the infor
 woe_format_outds = outdata.num_char_woe_format_dataset, /*Dataset with the Weight of Evidence variables*/
 output_formatted_data = outdata.num_char_vars_rcd_format_woe /*Original dataset, but with WOE variables instead of the original variables*/
 );
+/**************************************************************************/
+/**************************************************************************/
 
 proc printto;
 run;
