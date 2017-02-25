@@ -34,7 +34,7 @@ outtable_model_build_summary /*Model building summary table*/
 %let numeric_variables_to_analyse=;
 %let character_variables_to_analyse=;
 
-proc contents data=&modelling_data_development. (drop=bad_flag transact_id SamplingWeight) noprint out=contents;
+proc contents data=&modelling_data_development. (drop=&target_variable. &id_variable. &weight_variable.) noprint out=contents;
 run;
 proc sql noprint;
 select name into :numeric_variables_to_analyse separated by ' '
@@ -72,6 +72,8 @@ quit;
 %put The numeric variables that will go into the logistic regression are: &varlist_cont.;
 %put The character variables that will go into the logistic regression are: &varlist_disc.;
 
+ods output ModelBuildingSummary=outtable_model_build_summary
+			FitStatistics=FIT;
 proc logistic data=&modelling_data_development. outmodel=&output_model. outest=&output_coefficients. namelen=200;
       class &varlist_disc. / param=ref ;
       model &target_variable. (event='1') = &varlist_cont. &varlist_disc. &force_interactions. / link=logit
@@ -85,10 +87,13 @@ proc logistic data=&modelling_data_development. outmodel=&output_model. outest=&
 			ctable 
 			pprob=0.5;
 	  weight &weight_variable.;
-ods output ModelBuildingSummary=&outtable_model_build_summary.;
-ods output FitStatistics=FIT;
     output out=&outtable_development_score. p=ppred xbeta=logit predprob=(individual crossvalidate);
 	score data=&modelling_data_validation. out=&outtable_validation_score.;
+run;
+ods output close;
+
+data &outtable_model_build_summary.;
+	set outtable_model_build_summary;
 run;
 
 %mend logistic_regression;
