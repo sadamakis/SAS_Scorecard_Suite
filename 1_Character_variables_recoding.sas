@@ -53,11 +53,11 @@ libname outdata "&outpath.";
 %include "&macros_path.\run_green_wrapper.sas";
 %include "&macros_path.\ivs_and_woe_table.sas";
 
-
 /*********************************************************************************/
 /*********************************************************************************/
-filename output1 "&output_files.\1_Character_variables_recoding_output_%sysfunc(compress(%sysfunc(datetime(),datetime20.0),':')).log";
-filename logout1 "&output_files.\1_Character_variables_recoding_log_%sysfunc(compress(%sysfunc(datetime(),datetime20.0),':')).log";
+%let datetime_var = %sysfunc(compress(%sysfunc(datetime(),datetime20.0),':'));
+filename output1 "&output_files.\1_Character_variables_recoding_output_&datetime_var..log";
+filename logout1 "&output_files.\1_Character_variables_recoding_log_&datetime_var..log";
 proc printto print=output1 log=logout1 new;
 run;
 /*********************************************************************************/

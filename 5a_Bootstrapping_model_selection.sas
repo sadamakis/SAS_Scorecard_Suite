@@ -52,14 +52,18 @@ libname outdata "&outpath.";
 
 /*********************************************************************************/
 /*********************************************************************************/
-filename output5a "&output_files.\5a_Bootstrapping_model_selection_output_%sysfunc(compress(%sysfunc(datetime(),datetime20.0),':')).log";
-filename logout5a "&output_files.\5a_Bootstrapping_model_selection_log_%sysfunc(compress(%sysfunc(datetime(),datetime20.0),':')).log";
+%let datetime_var = %sysfunc(compress(%sysfunc(datetime(),datetime20.0),':'));
+filename output5a "&output_files.\5a_Bootstrapping_model_selection_output_&datetime_var..log";
+filename logout5a "&output_files.\5a_Bootstrapping_model_selection_log_&datetime_var..log";
 proc printto print=output5a log=logout5a new;
 run;
+/*********************************************************************************/
+/*********************************************************************************/
 
 proc datasets lib=work kill nolist memtype=data;
 quit;
 
+/***********************************************************************************/
 /*Split data to development and validation*/
 proc sql;
 create table outdata.Modelling_data_boot (rename= (SamplingWeight=weight_var)) as 

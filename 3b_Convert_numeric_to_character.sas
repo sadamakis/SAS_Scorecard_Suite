@@ -47,10 +47,14 @@ libname outdata "&outpath.";
 
 /*********************************************************************************/
 /*********************************************************************************/
-filename output3b "&output_files.\3b_Convert_numeric_to_character_output_%sysfunc(compress(%sysfunc(datetime(),datetime20.0),':')).log";
-filename logout3b "&output_files.\3b_Convert_numeric_to_character_log_%sysfunc(compress(%sysfunc(datetime(),datetime20.0),':')).log";
+%let datetime_var = %sysfunc(compress(%sysfunc(datetime(),datetime20.0),':'));
+filename output3b "&output_files.\3b_Convert_numeric_to_character_output_&datetime_var..log";
+filename logout3b "&output_files.\3b_Convert_numeric_to_character_log_&datetime_var..log";
 proc printto print=output3b log=logout3b new;
 run;
+/*********************************************************************************/
+/*********************************************************************************/
+
 proc datasets lib=work kill nolist memtype=data;
 quit;
 

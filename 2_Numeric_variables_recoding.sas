@@ -46,8 +46,9 @@ libname outdata "&outpath.";
 
 /*********************************************************************************/
 /*********************************************************************************/
-filename output2 "&output_files.\2_Numeric_variables_recoding_output_%sysfunc(compress(%sysfunc(datetime(),datetime20.0),':')).log";
-filename logout2 "&output_files.\2_Numeric_variables_recoding_log_%sysfunc(compress(%sysfunc(datetime(),datetime20.0),':')).log";
+%let datetime_var = %sysfunc(compress(%sysfunc(datetime(),datetime20.0),':'));
+filename output2 "&output_files.\2_Numeric_variables_recoding_output_&datetime_var..log";
+filename logout2 "&output_files.\2_Numeric_variables_recoding_log_&datetime_var..log";
 proc printto print=output2 log=logout2 new;
 run;
 /*********************************************************************************/

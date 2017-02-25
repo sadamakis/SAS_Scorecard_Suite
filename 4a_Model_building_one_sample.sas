@@ -49,10 +49,14 @@ libname outdata "&outpath.";
 
 /*********************************************************************************/
 /*********************************************************************************/
-filename output4a "&output_files.\4a_Model_building_one_sample_output_%sysfunc(compress(%sysfunc(datetime(),datetime20.0),':')).log";
-filename logout4a "&output_files.\4a_Model_building_one_sample_log_%sysfunc(compress(%sysfunc(datetime(),datetime20.0),':')).log";
+%let datetime_var = %sysfunc(compress(%sysfunc(datetime(),datetime20.0),':'));
+filename output4a "&output_files.\4a_Model_building_one_sample_output_&datetime_var..log";
+filename logout4a "&output_files.\4a_Model_building_one_sample_log_&datetime_var..log";
 proc printto print=output4a log=logout4a new;
 run;
+/*********************************************************************************/
+/*********************************************************************************/
+
 proc datasets lib=work kill nolist memtype=data;
 quit;
 
