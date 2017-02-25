@@ -46,6 +46,7 @@ libname outdata "&outpath.";
 %include "&macros_path.\merge_two_tables.sas";
 %include "&macros_path.\change_character_lengths.sas";
 %include "&macros_path.\identify_character_variables.sas";
+%include "&macros_path.\identify_numeric_variables.sas";
 %include "&macros_path.\NOD_BIN_character_wrapper.sas";
 %include "&macros_path.\check_number_of_rows.sas";
 %include "&macros_path.\green.sas";

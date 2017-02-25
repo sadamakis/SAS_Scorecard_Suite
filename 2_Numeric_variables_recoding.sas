@@ -39,6 +39,8 @@ libname outdata "&outpath.";
 %include "&macros_path.\numeric_missing.sas";
 %include "&macros_path.\find_1_level_numeric.sas";
 %include "&macros_path.\missing_has_1_level_join.sas";
+%include "&macros_path.\identify_numeric_variables.sas";
+%include "&macros_path.\ivs_and_woe_table.sas";
 %include "&macros_path.\replace_numeric_missing_values_with_mean.sas";
 %include "&macros_path.\NOD_BIN_numeric_wrapper.sas";
 

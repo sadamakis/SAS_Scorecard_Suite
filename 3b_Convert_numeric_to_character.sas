@@ -38,7 +38,9 @@ libname outdata "&outpath.";
 
 %include "&macros_path.\convert_numeric_to_character.sas";
 %include "&macros_path.\identify_character_variables.sas";
+%include "&macros_path.\identify_numeric_variables.sas";
 %include "&macros_path.\check_number_of_rows.sas";
+%include "&macros_path.\NOD_BIN_character_wrapper.sas";
 %include "&macros_path.\green.sas";
 %include "&macros_path.\run_green_wrapper.sas";
 %include "&macros_path.\ivs_and_woe_table.sas";
