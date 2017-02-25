@@ -110,7 +110,15 @@ character_variables = char_variables, /*Name of the macro variable that contains
 character_contents = char_variables_contents /*Name of the table that contain the contents of the character variables from &input_table. dataset*/
 );
 %put &char_variables.;
-%put %sysfunc(countw(&char_variables.));
+
+%let target_variable = bad_flag;
+proc sql noprint;
+select count(*) into: nlobs
+from outdata.Modelling_data_bt_development
+where &target_variable. = 0
+;
+quit;
+%put &nlobs.;
 
 %bootstrap_model_selection_IC(
 /*********************************************************************************/
@@ -129,7 +137,7 @@ varlist_disc = &char_variables., /*List of categorical variables that will go in
 nboots = 5, /*Number of bootstrap samples*/
 sampling_method = urs, /*srs or urs: sampling method for bootstrapping. srs for simple random selection 
 (no replacement), urs for random selection with replacement*/
-bootsize = 500, /*Bootstrap sample for 'goods'. In credit risk and fraud the 'bad flag' is undersampled. The bootstrap 
+bootsize = &nlobs., /*Bootstrap sample for 'goods'. In credit risk and fraud the 'bad flag' is undersampled. The bootstrap 
 sample selects all the bads and &bootsize. number of goods. This is to decrease the running time of the algorithm, 
 which can be very long - typically each bootstrap sample with ~300 variables takes about ~30 mins*/
 /*********************************************************************************/
@@ -162,7 +170,7 @@ BIC as the model selection criterion*/
 proc sql noprint;
 select _name_ into: predictors_in_the_model separated by ' '
 from outdata.predictors_outtable_BIC
-where average_IC>=60 /*and _NAME_ in (&num_variables.)*/
+where average_IC>=60
 ;
 quit;
 %put &predictors_in_the_model.;
@@ -183,7 +191,7 @@ varlist_disc = , /*List of categorical variables that will go in the model*/
 nboots = 5, /*Number of bootstrap samples*/
 sampling_method = urs, /*srs or urs: sampling method for bootstrapping. srs for simple random selection 
 (no replacement), urs for random selection with replacement*/
-bootsize = 500, /*Bootstrap sample for 'goods'. In credit risk and fraud the 'bad flag' is undersampled. The bootstrap 
+bootsize = &nlobs., /*Bootstrap sample for 'goods'. In credit risk and fraud the 'bad flag' is undersampled. The bootstrap 
 sample selects all the bads and &bootsize. number of goods. This is to decrease the running time of the algorithm, 
 which can be very long - typically each bootstrap sample with ~300 variables takes about ~30 mins*/
 /*********************************************************************************/
