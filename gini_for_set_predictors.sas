@@ -128,8 +128,8 @@ run;
 /**************************************************************************/
 /*Input*/
 input_dataset_prob = &outtable_development_score., /*Name of dataset that should have the score or predicted probability, e.g. output table from PROC LOGISTIC*/
-target_variable = bad_flag,  /*Name of target variable - leave blank if missing*/
-weight_variable = SamplingWeight, /*Name of weight variable in the input dataset. This should exist in the dataset
+target_variable = &target_variable.,  /*Name of target variable - leave blank if missing*/
+weight_variable = &weight_variable., /*Name of weight variable in the input dataset. This should exist in the dataset
 If there are no weights in the dataset then create a field with values 1 in every row*/
 score_variable = IP_0, /*Score variable should be, e.g., scorecard output or predicted probability*/
 /**************************************************************************/
@@ -140,8 +140,8 @@ GINI_outdset = &outtable_gini_development. /*Dataset that contains the Gini coef
 /**************************************************************************/
 /*Input*/
 input_dataset_prob = &outtable_validation_score., /*Name of dataset that should have the score or predicted probability, e.g. output table from PROC LOGISTIC*/
-target_variable = bad_flag,  /*Name of target variable - leave blank if missing*/
-weight_variable = SamplingWeight, /*Name of weight variable in the input dataset. This should exist in the dataset
+target_variable = &target_variable.,  /*Name of target variable - leave blank if missing*/
+weight_variable = &weight_variable., /*Name of weight variable in the input dataset. This should exist in the dataset
 If there are no weights in the dataset then create a field with values 1 in every row*/
 score_variable = P_0, /*Score variable should be, e.g., scorecard output or predicted probability*/
 /**************************************************************************/

@@ -61,7 +61,7 @@ proc score data=&modelling_data_development. score=predictors_coefficients_boot 
 run;
 data &bootstrap_score_dataset.;
 	set &bootstrap_score_dataset.;
-	IP_1 = exp(bad_flag2)/(1+exp(bad_flag2));
+	IP_1 = exp(&target_variable.2)/(1+exp(&target_variable.2));
 	IP_0 = 1 - IP_1;
 	keep &target_variable. &weight_variable. IP_0 IP_1;
 run;
