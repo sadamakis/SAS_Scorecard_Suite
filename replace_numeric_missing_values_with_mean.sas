@@ -18,9 +18,16 @@ select name into :numeric_variables_to_analyse separated by ' '
 from &numeric_summary.
 ;
 quit;
+%if %Symexist(numeric_variables_to_analyse)=0 %then %do;
+data &output_table.;
+	set &input_table. (keep= &target_variable. &id_variable. &weight_variable.) ;
+run;
+%end;
+%else %do;
 proc stdize data=&input_table. (keep= &numeric_variables_to_analyse. &target_variable. &id_variable. &weight_variable.) 
 	out=&output_table. missing=mean reponly;
   var &numeric_variables_to_analyse.;
 run;
+%end;
 %mend replace_numeric_missing_values;
 /*********************************************************************************/
