@@ -31,14 +31,14 @@ data &output_table.;
 	array char1(*) _char_;
 	array count_miss(&nvars) /*count_nmiss(&nvars)*/;
 	do i = 1 to dim(char1);
-	if strip(char1(i))='' or strip(char1(i))='.' then count_miss(i) + &weight_variable.;
+	if char1(i)='' then count_miss(i) + &weight_variable.;
 /*	else count_nmiss(i) + &weight_variable.;*/
 	end;
 	if last then do i = 1 to dim(char1);
 		set content_char point=i;
-		miss = sum(count_miss(i),0);
-		nonmiss = &totobs. - miss;
-		pctmiss = (miss / &totobs.) * 100;
+		miss = round(sum(count_miss(i),0), 0.01);
+		nonmiss = round(&totobs. - miss, 0.01);
+		pctmiss = round((miss / &totobs.) * 100, 0.01);
 		output;
 	end;
 	keep name label miss nonmiss pctmiss; 
