@@ -10,7 +10,7 @@ material. In addition, Sotirios Adamakis will provide no support for the materia
 */
 /*------------------------------------------------------------------------------------------------------*/
 /* Author:                   ---  Sotirios Adamakis                                                     */
-/* Program Name:             ---  1_Character_variables_recoding.sas                                    */
+/* Program Name:             ---  01_Character_variables_recoding.sas                                    */
 /* Description:              ---  Use this code to convert character variables to Weight of Evidence 
 variables  																					            */
 /*                                                                                                      */
@@ -56,8 +56,8 @@ libname outdata "&outpath.";
 /*********************************************************************************/
 /*********************************************************************************/
 %let datetime_var = %sysfunc(compress(%sysfunc(datetime(),datetime20.0),':'));
-filename output1 "&output_files.\1_Character_variables_recoding_output_&datetime_var..log";
-filename logout1 "&output_files.\1_Character_variables_recoding_log_&datetime_var..log";
+filename output1 "&output_files.\01_Character_variables_recoding_output_&datetime_var..log";
+filename logout1 "&output_files.\01_Character_variables_recoding_log_&datetime_var..log";
 proc printto print=output1 log=logout1 new;
 run;
 /*********************************************************************************/
@@ -207,7 +207,7 @@ outtable_num_levels = outdata.number_of_levels /*Summary table with all the vari
 /**************************************************************************/
 /* User-amendable part: If there are predictors with a high number of
 levels, e.g. postal code, then fix this to continue. The default setting 
-drops variables with more than 50 levels. If there are variables with many levels
+drops variables with more than 100 levels. If there are variables with many levels
 that the user wants to keep, then it is advisable to recode these variables
 at this stage.*/
 %drop_char_vars_with_many_levels(

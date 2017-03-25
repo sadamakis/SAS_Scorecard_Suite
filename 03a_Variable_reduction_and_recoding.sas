@@ -10,7 +10,7 @@ material. In addition, Sotirios Adamakis will provide no support for the materia
 */
 /*------------------------------------------------------------------------------------------------------*/
 /* Author:                   ---  Sotirios Adamakis                                                     */
-/* Program Name:             ---  3a_Variable_reduction_and_recoding.sas                                */
+/* Program Name:             ---  03a_Variable_reduction_and_recoding.sas                                */
 /* Description:              ---  Fix issues with predictors that are highly correlated. The output from
 this step is a dataset that treats highly correlated in the following ways: 
 - Select only one variable, the one that has the best two sample t-test with the target variable
@@ -55,8 +55,8 @@ libname outdata "&outpath.";
 /*********************************************************************************/
 /*********************************************************************************/
 %let datetime_var = %sysfunc(compress(%sysfunc(datetime(),datetime20.0),':'));
-filename output3a "&output_files.\3a_variable_reduction_and_recoding_output_&datetime_var..log";
-filename logout3a "&output_files.\3a_variable_reduction_and_recoding_log_&datetime_var..log";
+filename output3a "&output_files.\03a_variable_reduction_and_recoding_output_&datetime_var..log";
+filename logout3a "&output_files.\03a_variable_reduction_and_recoding_log_&datetime_var..log";
 proc printto print=output3a log=logout3a new;
 run;
 /*********************************************************************************/

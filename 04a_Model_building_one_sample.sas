@@ -10,7 +10,7 @@ material. In addition, Sotirios Adamakis will provide no support for the materia
 */
 /*------------------------------------------------------------------------------------------------------*/
 /* Author:                   ---  Sotirios Adamakis                                                     */
-/* Program Name:             ---  4a_Model_building_one_sample.sas                                      */
+/* Program Name:             ---  04a_Model_building_one_sample.sas                                      */
 /* Description:              ---  Build models using the one sample approach, as opposed to bootstrapping                                                                                           */
 /*                                                                                                      */
 /* Date Originally Created:  ---                                                                        */
@@ -50,8 +50,8 @@ libname outdata "&outpath.";
 /*********************************************************************************/
 /*********************************************************************************/
 %let datetime_var = %sysfunc(compress(%sysfunc(datetime(),datetime20.0),':'));
-filename output4a "&output_files.\4a_Model_building_one_sample_output_&datetime_var..log";
-filename logout4a "&output_files.\4a_Model_building_one_sample_log_&datetime_var..log";
+filename output4a "&output_files.\04a_Model_building_one_sample_output_&datetime_var..log";
+filename logout4a "&output_files.\04a_Model_building_one_sample_log_&datetime_var..log";
 proc printto print=output4a log=logout4a new;
 run;
 /*********************************************************************************/

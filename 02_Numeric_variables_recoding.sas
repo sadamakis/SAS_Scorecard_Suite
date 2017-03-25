@@ -10,7 +10,7 @@ material. In addition, Sotirios Adamakis will provide no support for the materia
 */
 /*------------------------------------------------------------------------------------------------------*/
 /* Author:                   ---  Sotirios Adamakis                                                     */
-/* Program Name:             ---  2_Numeric_variables_recoding.sas                                      */
+/* Program Name:             ---  02_Numeric_variables_recoding.sas                                      */
 /* Description:   ---  Use this code to convert numeric variables to Weight of Evidence   
 variables                                                                                               */
 /*                                                                                                      */
@@ -47,8 +47,8 @@ libname outdata "&outpath.";
 /*********************************************************************************/
 /*********************************************************************************/
 %let datetime_var = %sysfunc(compress(%sysfunc(datetime(),datetime20.0),':'));
-filename output2 "&output_files.\2_Numeric_variables_recoding_output_&datetime_var..log";
-filename logout2 "&output_files.\2_Numeric_variables_recoding_log_&datetime_var..log";
+filename output2 "&output_files.\02_Numeric_variables_recoding_output_&datetime_var..log";
+filename logout2 "&output_files.\02_Numeric_variables_recoding_log_&datetime_var..log";
 proc printto print=output2 log=logout2 new;
 run;
 /*********************************************************************************/
@@ -114,7 +114,7 @@ output_table = outdata.numeric_vars /*Name of table that will have the target va
 %identify_numeric_variables(
 /*********************************************************************************/
 /*Input*/
-input_table = outdata.numeric_vars, /*Name of table that has the character variables*/
+input_table = outdata.numeric_vars, /*Name of table that has the numeric variables*/
 target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
 id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
 weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
@@ -178,7 +178,7 @@ output_recode_data = outdata.num_vars_format_woe /*Output table that contains th
 %identify_numeric_variables(
 /*********************************************************************************/
 /*Input*/
-input_table = outdata.num_vars_format_woe, /*Name of table that has the character variables*/
+input_table = outdata.num_vars_format_woe, /*Name of table that has the numeric variables*/
 target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
 id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
 weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 

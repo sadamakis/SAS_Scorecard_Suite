@@ -10,7 +10,7 @@ material. In addition, Sotirios Adamakis will provide no support for the materia
 */
 /*------------------------------------------------------------------------------------------------------*/
 /* Author:                   ---  Sotirios Adamakis                                                     */
-/* Program Name:             ---  5a_Bootstrapping_model_selection.sas                                  */
+/* Program Name:             ---  05a_Bootstrapping_model_selection.sas                                  */
 /* Description:              ---  Build models using bootstrap sampling.  								*/
 /*                                                                                                      */
 /* Date Originally Created:  ---                                                                        */
@@ -51,8 +51,8 @@ libname outdata "&outpath.";
 /*********************************************************************************/
 /*********************************************************************************/
 %let datetime_var = %sysfunc(compress(%sysfunc(datetime(),datetime20.0),':'));
-filename output5a "&output_files.\5a_Bootstrapping_model_selection_output_&datetime_var..log";
-filename logout5a "&output_files.\5a_Bootstrapping_model_selection_log_&datetime_var..log";
+filename output5a "&output_files.\05a_Bootstrapping_model_selection_output_&datetime_var..log";
+filename logout5a "&output_files.\05a_Bootstrapping_model_selection_log_&datetime_var..log";
 proc printto print=output5a log=logout5a new;
 run;
 /*********************************************************************************/

@@ -10,7 +10,7 @@ material. In addition, Sotirios Adamakis will provide no support for the materia
 */
 /*------------------------------------------------------------------------------------------------------*/
 /* Author:                   ---  Sotirios Adamakis                                                     */
-/* Program Name:             ---  0_Prepare_input_data.sas                                              */
+/* Program Name:             ---  00_Prepare_input_data.sas                                              */
 /* Description:              ---  User-amendable code that should create a table that has exactly the 
 following variables: 
  - target variable
@@ -46,8 +46,8 @@ libname outdata "&outpath.";
 /*********************************************************************************/
 /*********************************************************************************/
 %let datetime_var = %sysfunc(compress(%sysfunc(datetime(),datetime20.0),':'));
-filename output0 "&output_files.\0_Prepare_input_data_output_&datetime_var..log";
-filename logout0 "&output_files.\0_Prepare_input_data_log_&datetime_var..log";
+filename output0 "&output_files.\00_Prepare_input_data_output_&datetime_var..log";
+filename logout0 "&output_files.\00_Prepare_input_data_log_&datetime_var..log";
 proc printto print=output0 log=logout0 new;
 run;
 /*********************************************************************************/

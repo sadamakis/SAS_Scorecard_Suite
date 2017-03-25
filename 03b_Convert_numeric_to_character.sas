@@ -10,7 +10,7 @@ material. In addition, Sotirios Adamakis will provide no support for the materia
 */
 /*------------------------------------------------------------------------------------------------------*/
 /* Author:                   ---  Sotirios Adamakis                                                     */
-/* Program Name:             ---  3b_Convert_numeric_to_character.sas                                   */
+/* Program Name:             ---  03b_Convert_numeric_to_character.sas                                   */
 /* Description:              ---  Converts numeric variables to character variables and creates
 	Weight of Evidence variables                                                                        */
 /*                                                                                                      */
@@ -48,8 +48,8 @@ libname outdata "&outpath.";
 /*********************************************************************************/
 /*********************************************************************************/
 %let datetime_var = %sysfunc(compress(%sysfunc(datetime(),datetime20.0),':'));
-filename output3b "&output_files.\3b_Convert_numeric_to_character_output_&datetime_var..log";
-filename logout3b "&output_files.\3b_Convert_numeric_to_character_log_&datetime_var..log";
+filename output3b "&output_files.\03b_Convert_numeric_to_character_output_&datetime_var..log";
+filename logout3b "&output_files.\03b_Convert_numeric_to_character_log_&datetime_var..log";
 proc printto print=output3b log=logout3b new;
 run;
 /*********************************************************************************/
