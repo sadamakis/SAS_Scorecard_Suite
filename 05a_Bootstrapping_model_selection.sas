@@ -47,6 +47,7 @@ libname outdata "&outpath.";
 %include "&macros_path.\bootstrap_coefficients_estimate.sas";
 %include "&macros_path.\plot_bootstrap_diagnostics.sas";
 %include "&macros_path.\rescore_bootstrap_coefficients.sas";
+%include "&macros_path.\transform_prob_to_scorecard.sas";
 
 /*********************************************************************************/
 /*********************************************************************************/
@@ -230,6 +231,28 @@ bootstrap_score_dataset = outdata.bootstrap_score_dataset_dev, /*Dataset that co
 GINI_outdset = outdata.bootstrap_GINI_dev /*Dataset that contains the Gini coefficient*/
 );
 
+%transform_prob_to_scorecard(
+/*********************************************************************************/
+/*Input*/
+input_pred_prob_dataset = outdata.bootstrap_score_dataset_dev, /*Input dataset that has the estimated 
+probability.*/
+probability_variable = IP_1, /*Variable that has the probabilities for the outcome*/
+odds = 30, /*Specifies the Non-Event/Event odds that correspond to the score value that you 
+specify in the Scorecard Points property.*/
+scorecard_points = 600, /*Specifies a score that is associated with the odds that are specified in 
+the Odds property. For example, if you use the default values of 200 and 50 for the Odds, a score of 
+200 represents odds of 50 to 1 (that is P(Non-Event)/P(Event)=50).*/
+point_double_odds = 20, /*Increase in score points that generates the score that corresponds to 
+twice the odds.*/
+reverse_scorecard = 1, /*Specifies whether the generated scorecard points should be reversed. 
+Set to 0 if the higher the event rate the higher the score, and set to 1 if the higher the event rate 
+the lower the score.*/
+/*********************************************************************************/
+/*Output*/
+output_score_dataset = outdata.bootstrap_score_dev /*Output dataset that has the computated
+scorecard value. The name of the new field is "scorecard".*/
+);
+
 %rescore_bootstrap_coefficients(
 /*********************************************************************************/
 /*Input*/
@@ -243,6 +266,28 @@ If there are no weights in the dataset then create a field with values 1 in ever
 /*Output*/
 bootstrap_score_dataset = outdata.bootstrap_score_dataset_val, /*Dataset that contains the target variable, the weight variable and the predicted probabilities*/
 GINI_outdset = outdata.bootstrap_GINI_val /*Dataset that contains the Gini coefficient*/
+);
+
+%transform_prob_to_scorecard(
+/*********************************************************************************/
+/*Input*/
+input_pred_prob_dataset = outdata.bootstrap_score_dataset_val, /*Input dataset that has the estimated 
+probability.*/
+probability_variable = IP_1, /*Variable that has the probabilities for the outcome*/
+odds = 30, /*Specifies the Non-Event/Event odds that correspond to the score value that you 
+specify in the Scorecard Points property.*/
+scorecard_points = 600, /*Specifies a score that is associated with the odds that are specified in 
+the Odds property. For example, if you use the default values of 200 and 50 for the Odds, a score of 
+200 represents odds of 50 to 1 (that is P(Non-Event)/P(Event)=50).*/
+point_double_odds = 20, /*Increase in score points that generates the score that corresponds to 
+twice the odds.*/
+reverse_scorecard = 1, /*Specifies whether the generated scorecard points should be reversed. 
+Set to 0 if the higher the event rate the higher the score, and set to 1 if the higher the event rate 
+the lower the score.*/
+/*********************************************************************************/
+/*Output*/
+output_score_dataset = outdata.bootstrap_score_val /*Output dataset that has the computated
+scorecard value. The name of the new field is "scorecard".*/
 );
 
 %bootstrap_coefficients_estimate(

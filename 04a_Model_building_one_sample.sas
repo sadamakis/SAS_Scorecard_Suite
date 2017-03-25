@@ -46,6 +46,7 @@ libname outdata "&outpath.";
 %include "&macros_path.\Gini_with_proc_freq.sas";
 %include "&macros_path.\gini_for_set_predictors.sas";
 %include "&macros_path.\roc_curve_gini_actual_vs_predctd.sas" / lrecl=1000;
+%include "&macros_path.\transform_prob_to_scorecard.sas";
 
 /*********************************************************************************/
 /*********************************************************************************/
@@ -128,6 +129,50 @@ outtable_development_score = outdata.outtable_development_score_set, /*Developme
 outtable_validation_score = outdata.outtable_validation_score_set, /*Validation sample with the predicted probability*/
 outtable_gini_development = outdata.outtable_gini_development_set, /*Table that calculates the Gini coefficient for the development sample*/
 outtable_gini_validation = outdata.outtable_gini_validation_set /*Table that calculates the Gini coefficient for the validation sample*/
+);
+
+%transform_prob_to_scorecard(
+/*********************************************************************************/
+/*Input*/
+input_pred_prob_dataset = outdata.outtable_development_score_set, /*Input dataset that has the estimated 
+probability.*/
+probability_variable = IP_1, /*Variable that has the probabilities for the outcome*/
+odds = 30, /*Specifies the Non-Event/Event odds that correspond to the score value that you 
+specify in the Scorecard Points property.*/
+scorecard_points = 600, /*Specifies a score that is associated with the odds that are specified in 
+the Odds property. For example, if you use the default values of 200 and 50 for the Odds, a score of 
+200 represents odds of 50 to 1 (that is P(Non-Event)/P(Event)=50).*/
+point_double_odds = 20, /*Increase in score points that generates the score that corresponds to 
+twice the odds.*/
+reverse_scorecard = 1, /*Specifies whether the generated scorecard points should be reversed. 
+Set to 0 if the higher the event rate the higher the score, and set to 1 if the higher the event rate 
+the lower the score.*/
+/*********************************************************************************/
+/*Output*/
+output_score_dataset = outdata.outtable_development_score_table /*Output dataset that has the computated
+scorecard value. The name of the new field is "scorecard".*/
+);
+
+%transform_prob_to_scorecard(
+/*********************************************************************************/
+/*Input*/
+input_pred_prob_dataset = outdata.Outtable_validation_score_set, /*Input dataset that has the estimated 
+probability.*/
+probability_variable = P_1, /*Variable that has the probabilities for the outcome*/
+odds = 30, /*Specifies the Non-Event/Event odds that correspond to the score value that you 
+specify in the Scorecard Points property.*/
+scorecard_points = 600, /*Specifies a score that is associated with the odds that are specified in 
+the Odds property. For example, if you use the default values of 200 and 50 for the Odds, a score of 
+200 represents odds of 50 to 1 (that is P(Non-Event)/P(Event)=50).*/
+point_double_odds = 20, /*Increase in score points that generates the score that corresponds to 
+twice the odds.*/
+reverse_scorecard = 1, /*Specifies whether the generated scorecard points should be reversed. 
+Set to 0 if the higher the event rate the higher the score, and set to 1 if the higher the event rate 
+the lower the score.*/
+/*********************************************************************************/
+/*Output*/
+output_score_dataset = outdata.outtable_validation_score_table /*Output dataset that has the computated
+scorecard value. The name of the new field is "scorecard".*/
 );
 
 %roc_curve_gini_actual_vs_predctd(
