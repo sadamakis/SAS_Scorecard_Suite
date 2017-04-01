@@ -45,11 +45,12 @@ progName = programName, /*Macro variable the contains the SAS file name*/
 progPath = programPath /*Macro variable that contains the path where the SAS file is stored*/
 );
 
-%include "&programPath.\99_Solution_parameter_configuration.sas";
+%include "&programPath.\000_Solution_parameter_configuration.sas";
 
 options compress=yes;
 
-libname outdata "&outpath.";
+libname input "&data_path.\input";
+libname output "&data_path.\output";
 
 %include "&macros_path.\logistic_regression.sas";
 %include "&macros_path.\Gini_with_proc_freq.sas";
@@ -60,8 +61,8 @@ libname outdata "&outpath.";
 /*********************************************************************************/
 /*********************************************************************************/
 %let datetime_var = %sysfunc(compress(%sysfunc(datetime(),datetime20.0),':'));
-filename output4a "&output_files.\04a_Model_building_one_sample_output_&datetime_var..log";
-filename logout4a "&output_files.\04a_Model_building_one_sample_log_&datetime_var..log";
+filename output4a "&log_path.\04a_Model_building_one_sample_output_&datetime_var..log";
+filename logout4a "&log_path.\04a_Model_building_one_sample_log_&datetime_var..log";
 proc printto print=output4a log=logout4a new;
 run;
 /*********************************************************************************/
@@ -73,27 +74,27 @@ quit;
 /***********************************************************************************/
 /*Split data to development and validation*/
 proc sql;
-create table outdata.Modelling_data as 
+create table output.Modelling_data as 
 select 
 	t1.*
 	, t2.development_flag 
-from outdata.numeric_vars_min_d as t1
+from output.numeric_vars_min_d as t1
 left join &table_name._dev_val_split as t2
 on t1.&ID_variable_name. = t2.&ID_variable_name.
 ;
 quit;
-data outdata.Modelling_data_development (drop= development_flag) outdata.Modelling_data_validation (drop= development_flag);
-	set outdata.Modelling_data;
-	if development_flag=1 then output outdata.Modelling_data_development;
-	else output outdata.Modelling_data_validation;
+data output.Modelling_data_development (drop= development_flag) output.Modelling_data_validation (drop= development_flag);
+	set output.Modelling_data;
+	if development_flag=1 then output output.Modelling_data_development;
+	else output output.Modelling_data_validation;
 run;
 /***********************************************************************************/
 
 %logistic_regression(
 /***********************************************************************************/
 /*Input*/
-modelling_data_development = outdata.Modelling_data_development, /*Development data that will be used to create a logistic regression model*/
-modelling_data_validation = outdata.Modelling_data_validation, /*Validation data that will be used to validate the logistic regression model*/
+modelling_data_development = output.Modelling_data_development, /*Development data that will be used to create a logistic regression model*/
+modelling_data_validation = output.Modelling_data_validation, /*Validation data that will be used to validate the logistic regression model*/
 target_variable = &target_variable_name.,  /*Name of target variable - leave blank if missing*/
 id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
@@ -112,38 +113,38 @@ If no interactions will be forced in the model, then leave this blank.*/
 use_interactions = N, /*Y if 2-way interactions of ALL the variables will be used in the model*/
 /***********************************************************************************/
 /*Output*/
-output_model = outdata.output_model, /*Dataset with the logistic regression model*/
-output_coefficients = outdata.output_coefficients, /*Dataset with the coefficients from the final model*/
-outtable_development_score = outdata.outtable_development_score, /*Development sample with the predicted probability*/
-outtable_validation_score = outdata.outtable_validation_score, /*Validation sample with the predicted probability*/
-outtable_model_build_summary = outdata.outtable_model_build_summary /*Model building summary table*/
+output_model = output.output_model, /*Dataset with the logistic regression model*/
+output_coefficients = output.output_coefficients, /*Dataset with the coefficients from the final model*/
+outtable_development_score = output.outtable_development_score, /*Development sample with the predicted probability*/
+outtable_validation_score = output.outtable_validation_score, /*Validation sample with the predicted probability*/
+outtable_model_build_summary = output.outtable_model_build_summary /*Model building summary table*/
 );
 
 %gini_for_set_predictors(
 /***********************************************************************************/
 /*Input*/
-input_model_build_summary = outdata.outtable_model_build_summary, /*Model building summary dataset. This dataset is created when enabling 
+input_model_build_summary = output.outtable_model_build_summary, /*Model building summary dataset. This dataset is created when enabling 
 ModelBuildingSummary option in PROC LOGISTIC*/
 input_number_variables_in_model = 3, /*Number of variables that will be in the model.*/
-modelling_data_development = outdata.Modelling_data_development, /*Development data that will be used to create a logistic regression model*/
-modelling_data_validation = outdata.Modelling_data_validation, /*Validation data that will be used to validate the logistic regression model*/
+modelling_data_development = output.Modelling_data_development, /*Development data that will be used to create a logistic regression model*/
+modelling_data_validation = output.Modelling_data_validation, /*Validation data that will be used to validate the logistic regression model*/
 target_variable = &target_variable_name.,  /*Name of target variable - leave blank if missing*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /***********************************************************************************/
 /*Output*/
-output_model = outdata.output_model_set, /*Dataset with the logistic regression model*/
-output_coefficients = outdata.output_coefficients_set, /*Dataset with the coefficients from the final model*/
-outtable_development_score = outdata.outtable_development_score_set, /*Development sample with the predicted probability*/
-outtable_validation_score = outdata.outtable_validation_score_set, /*Validation sample with the predicted probability*/
-outtable_gini_development = outdata.outtable_gini_development_set, /*Table that calculates the Gini coefficient for the development sample*/
-outtable_gini_validation = outdata.outtable_gini_validation_set /*Table that calculates the Gini coefficient for the validation sample*/
+output_model = output.output_model_set, /*Dataset with the logistic regression model*/
+output_coefficients = output.output_coefficients_set, /*Dataset with the coefficients from the final model*/
+outtable_development_score = output.outtable_development_score_set, /*Development sample with the predicted probability*/
+outtable_validation_score = output.outtable_validation_score_set, /*Validation sample with the predicted probability*/
+outtable_gini_development = output.outtable_gini_development_set, /*Table that calculates the Gini coefficient for the development sample*/
+outtable_gini_validation = output.outtable_gini_validation_set /*Table that calculates the Gini coefficient for the validation sample*/
 );
 
 %transform_prob_to_scorecard(
 /*********************************************************************************/
 /*Input*/
-input_pred_prob_dataset = outdata.outtable_development_score_set, /*Input dataset that has the estimated 
+input_pred_prob_dataset = output.outtable_development_score_set, /*Input dataset that has the estimated 
 probability.*/
 probability_variable = IP_1, /*Variable that has the probabilities for the outcome*/
 odds = 30, /*Specifies the Non-Event/Event odds that correspond to the score value that you 
@@ -158,14 +159,14 @@ Set to 0 if the higher the event rate the higher the score, and set to 1 if the 
 the lower the score.*/
 /*********************************************************************************/
 /*Output*/
-output_score_dataset = outdata.outtable_development_score_table /*Output dataset that has the computated
+output_score_dataset = output.outtable_development_score_table /*Output dataset that has the computated
 scorecard value. The name of the new field is "scorecard".*/
 );
 
 %transform_prob_to_scorecard(
 /*********************************************************************************/
 /*Input*/
-input_pred_prob_dataset = outdata.Outtable_validation_score_set, /*Input dataset that has the estimated 
+input_pred_prob_dataset = output.Outtable_validation_score_set, /*Input dataset that has the estimated 
 probability.*/
 probability_variable = P_1, /*Variable that has the probabilities for the outcome*/
 odds = 30, /*Specifies the Non-Event/Event odds that correspond to the score value that you 
@@ -180,14 +181,14 @@ Set to 0 if the higher the event rate the higher the score, and set to 1 if the 
 the lower the score.*/
 /*********************************************************************************/
 /*Output*/
-output_score_dataset = outdata.outtable_validation_score_table /*Output dataset that has the computated
+output_score_dataset = output.outtable_validation_score_table /*Output dataset that has the computated
 scorecard value. The name of the new field is "scorecard".*/
 );
 
 %roc_curve_gini_actual_vs_predctd(
 /**************************************************************************/
 /*Input*/
-input_dataset_prob = outdata.Outtable_development_score_set, /*Name of dataset that should have the score or predicted probability, e.g. output table from PROC LOGISTIC*/
+input_dataset_prob = output.Outtable_development_score_set, /*Name of dataset that should have the score or predicted probability, e.g. output table from PROC LOGISTIC*/
 target_variable = &target_variable_name.,  /*Name of target variable - leave blank if missing*/
 score_variable = IP_1, /*Score variable should be, e.g., scorecard output or predicted probability*/
 number_of_groups = 20, /*Score variable will be split in groups using PROC RANK so that actual and predicted 
@@ -195,7 +196,7 @@ probabilities will be calculated in each band. The higher the number of groups t
 approximation, but the longer the macro will take to run.*/
 /**************************************************************************/
 /*Output*/
-AUC_outdset = outdata.AUC_outdset, /*The dataset that has the values for the area under the curve per bin. This dataset can be 
+AUC_outdset = output.AUC_outdset, /*The dataset that has the values for the area under the curve per bin. This dataset can be 
 used to plot the area under the curve. Use the following code to generate the graph:
 goptions reset=all;
 axis1 label=("False positive rate") order=(0 to 1 by 0.10);
@@ -206,8 +207,8 @@ proc gplot data=&AUC_outdset.;
       title "ROC curve";
 run;
 */
-GINI_outdset = outdata.GINI_outdset, /*Dataset that contains the Gini coefficient approximation. Trapezoidal rule is used for the approximation.*/
-predicted_expected_outdset = outdata.predicted_expected_outdset /*Output dataset that contains actual and predicted bad rate per score band. 
+GINI_outdset = output.GINI_outdset, /*Dataset that contains the Gini coefficient approximation. Trapezoidal rule is used for the approximation.*/
+predicted_expected_outdset = output.predicted_expected_outdset /*Output dataset that contains actual and predicted bad rate per score band. 
 Use the following code to produce the graph of actual vs expected bad rate per score band:
 goptions reset=all;
 axis1 label=("Score band") order=(0 to 10 by 1);
@@ -224,7 +225,7 @@ run;
 goptions reset=all;
 axis1 label=("False positive rate") order=(0 to 1 by 0.10);
 axis2 label=("True positive rate") order=(0 to 1 by 0.10);
-proc gplot data=outdata.AUC_outdset;
+proc gplot data=output.AUC_outdset;
       symbol v=dot h=1 interpol=join;
       plot true_positive_rate*false_positive_rate / overlay haxis=axis1 vaxis=axis2;
       title "ROC curve";
@@ -235,7 +236,7 @@ goptions reset=all;
 axis1 label=("Score band") /*order=(0 to 10 by 1)*/;
 axis2 label=("Bad rate") /*order=(0 to 0.01 by 0.010)*/;
 Legend1 value=(color=blue height=1 'Actual bad rate' 'Predicted bad rate');
-proc gplot data=outdata.predicted_expected_outdset;
+proc gplot data=output.predicted_expected_outdset;
 	symbol v=dot h=1 interpol=join;
 	plot (target_actual_prob target_predicted_prob)*sscoreband / overlay legend=legend1 haxis=axis1 vaxis=axis2;
 	title "Scorecard performance";

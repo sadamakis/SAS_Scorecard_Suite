@@ -45,11 +45,12 @@ progName = programName, /*Macro variable the contains the SAS file name*/
 progPath = programPath /*Macro variable that contains the path where the SAS file is stored*/
 );
 
-%include "&programPath.\99_Solution_parameter_configuration.sas";
+%include "&programPath.\000_Solution_parameter_configuration.sas";
 
 options compress=yes;
 
-libname outdata "&outpath.";
+libname input "&data_path.\input";
+libname output "&data_path.\output";
 
 %include "&macros_path.\identify_numeric_variables.sas";
 %include "&macros_path.\identify_character_variables.sas";
@@ -63,8 +64,8 @@ libname outdata "&outpath.";
 /*********************************************************************************/
 /*********************************************************************************/
 %let datetime_var = %sysfunc(compress(%sysfunc(datetime(),datetime20.0),':'));
-filename output5a "&output_files.\05a_Bootstrapping_model_selection_output_&datetime_var..log";
-filename logout5a "&output_files.\05a_Bootstrapping_model_selection_log_&datetime_var..log";
+filename output5a "&log_path.\05a_Bootstrapping_model_selection_output_&datetime_var..log";
+filename logout5a "&log_path.\05a_Bootstrapping_model_selection_log_&datetime_var..log";
 proc printto print=output5a log=logout5a new;
 run;
 /*********************************************************************************/
@@ -76,26 +77,26 @@ quit;
 /***********************************************************************************/
 /*Split data to development and validation*/
 proc sql;
-create table outdata.Modelling_data_boot as 
+create table output.Modelling_data_boot as 
 select 
 	t1.*
 	, t2.development_flag 
-from outdata.numeric_vars_min_d as t1
+from output.numeric_vars_min_d as t1
 left join &table_name._dev_val_split as t2
 on t1.&ID_variable_name. = t2.&ID_variable_name.
 ;
 quit;
-data outdata.Modelling_data_bt_development (drop= development_flag) outdata.Modelling_data_bt_validation (drop= development_flag);
-	set outdata.Modelling_data;
-	if development_flag=1 then output outdata.Modelling_data_bt_development;
-	else output outdata.Modelling_data_bt_validation;
+data output.Modelling_data_bt_development (drop= development_flag) output.Modelling_data_bt_validation (drop= development_flag);
+	set output.Modelling_data;
+	if development_flag=1 then output output.Modelling_data_bt_development;
+	else output output.Modelling_data_bt_validation;
 run;
 /***********************************************************************************/
 
 %identify_numeric_variables(
 /*********************************************************************************/
 /*Input*/
-input_table = outdata.Modelling_data_bt_development, /*Name of table that has the character variables*/
+input_table = output.Modelling_data_bt_development, /*Name of table that has the character variables*/
 target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
 id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
@@ -111,7 +112,7 @@ numeric_contents = num_variables_contents /*Name of the table that contain the c
 %identify_character_variables(
 /*********************************************************************************/
 /*Input*/
-input_table = outdata.Modelling_data_bt_development, /*Name of table that has the character variables*/
+input_table = output.Modelling_data_bt_development, /*Name of table that has the character variables*/
 target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
 id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
@@ -126,7 +127,7 @@ character_contents = char_variables_contents /*Name of the table that contain th
 %let target_variable = &target_variable_name.;
 proc sql noprint;
 select count(*) into: nlobs
-from outdata.Modelling_data_bt_development
+from output.Modelling_data_bt_development
 where &target_variable. = 0
 ;
 quit;
@@ -135,9 +136,9 @@ quit;
 %bootstrap_model_selection_IC(
 /*********************************************************************************/
 /*Input*/
-modelling_data_development = outdata.Modelling_data_bt_development, /*Development data that will be used to create a logistic regression model.
+modelling_data_development = output.Modelling_data_bt_development, /*Development data that will be used to create a logistic regression model.
 LIMITATION: The table name should be up to 30 characters.*/
-modelling_data_validation = outdata.Modelling_data_bt_validation, /*Validation data that will be used to validate the logistic regression model. 
+modelling_data_validation = output.Modelling_data_bt_validation, /*Validation data that will be used to validate the logistic regression model. 
 LIMITATION: The table name should be up to 30 characters.*/
 target_variable = &target_variable_name.,  /*Name of target variable - leave blank if missing*/
 id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
@@ -154,34 +155,34 @@ sample selects all the bads and &bootsize. number of goods. This is to decrease 
 which can be very long - typically each bootstrap sample with ~300 variables takes about ~30 mins*/
 /*********************************************************************************/
 /*Output*/
-predictors_outtable_AIC = outdata.predictors_outtable_AIC, /*Table that stores the variables' summary, i.e. how many times they were 
+predictors_outtable_AIC = output.predictors_outtable_AIC, /*Table that stores the variables' summary, i.e. how many times they were 
 entered in the model, based on AIC*/
-predictors_outtable_BIC = outdata.predictors_outtable_BIC, /*Table that stores the variables' summary, i.e. how many times they were 
+predictors_outtable_BIC = output.predictors_outtable_BIC, /*Table that stores the variables' summary, i.e. how many times they were 
 entered in the model, based on BIC*/
-summary_outtable_AIC = outdata.summary_outtable_AIC, /*Table that stores the AIC summary*/
-summary_outtable_BIC = outdata.summary_outtable_BIC, /*Table that stores the BIC summary*/
-gini_outtable_development_AIC = outdata.gini_outtable_development_AIC, /*Table that stores the Gini coefficients for the development sample using
+summary_outtable_AIC = output.summary_outtable_AIC, /*Table that stores the AIC summary*/
+summary_outtable_BIC = output.summary_outtable_BIC, /*Table that stores the BIC summary*/
+gini_outtable_development_AIC = output.gini_outtable_development_AIC, /*Table that stores the Gini coefficients for the development sample using
 AIC as the model selection criterion*/
-gini_outtable_validation_AIC = outdata.gini_outtable_validation_AIC, /*Table that stores the Gini coefficients for the validation sample using
+gini_outtable_validation_AIC = output.gini_outtable_validation_AIC, /*Table that stores the Gini coefficients for the validation sample using
 AIC as the model selection criterion*/
-gini_outtable_development_BIC = outdata.gini_outtable_development_BIC, /*Table that stores the Gini coefficients for the development sample using
+gini_outtable_development_BIC = output.gini_outtable_development_BIC, /*Table that stores the Gini coefficients for the development sample using
 BIC as the model selection criterion*/
-gini_outtable_validation_BIC = outdata.gini_outtable_validation_BIC, /*Table that stores the Gini coefficients for the validation sample using
+gini_outtable_validation_BIC = output.gini_outtable_validation_BIC, /*Table that stores the Gini coefficients for the validation sample using
 BIC as the model selection criterion*/
-KS_outtable_development_AIC = outdata.KS_outtable_development_AIC, /*Table that stores the KS statistics for the development sample using
+KS_outtable_development_AIC = output.KS_outtable_development_AIC, /*Table that stores the KS statistics for the development sample using
 AIC as the model selection criterion*/
-KS_outtable_validation_AIC = outdata.KS_outtable_validation_AIC, /*Table that stores the KS statistics for the validation sample using
+KS_outtable_validation_AIC = output.KS_outtable_validation_AIC, /*Table that stores the KS statistics for the validation sample using
 AIC as the model selection criterion*/
-KS_outtable_development_BIC = outdata.KS_outtable_development_BIC, /*Table that stores the KS statistics for the development sample using
+KS_outtable_development_BIC = output.KS_outtable_development_BIC, /*Table that stores the KS statistics for the development sample using
 BIC as the model selection criterion*/
-KS_outtable_validation_BIC = outdata.KS_outtable_validation_BIC /*Table that stores the KS statistics for the validation sample using
+KS_outtable_validation_BIC = output.KS_outtable_validation_BIC /*Table that stores the KS statistics for the validation sample using
 BIC as the model selection criterion*/
 );
 
 /*Select numeric variables that will go in the model*/
 proc sql noprint;
 select _name_ into: predictors_in_the_model separated by ' '
-from outdata.predictors_outtable_BIC
+from output.predictors_outtable_BIC
 where average_IC>=60
 ;
 quit;
@@ -192,8 +193,8 @@ quit;
 %bootstrap_coefficients_estimate(
 /*********************************************************************************/
 /*Input*/
-modelling_data_development = outdata.Modelling_data_bt_development, /*Development data that will be used to create a logistic regression model*/
-modelling_data_validation = outdata.Modelling_data_bt_validation, /*Validation data that will be used to validate the logistic regression model*/
+modelling_data_development = output.Modelling_data_bt_development, /*Development data that will be used to create a logistic regression model*/
+modelling_data_validation = output.Modelling_data_bt_validation, /*Validation data that will be used to validate the logistic regression model*/
 target_variable = &target_variable_name.,  /*Name of target variable - leave blank if missing*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row. This should not be weight, 
@@ -208,19 +209,19 @@ sample selects all the bads and &bootsize. number of goods. This is to decrease 
 which can be very long - typically each bootstrap sample with ~300 variables takes about ~30 mins*/
 /*********************************************************************************/
 /*Output*/
-predictors_coefficients_outtable = outdata.predictors_coeffcnts_smmry, /*Table that stores the predictor coefficients for each bootstrap sample.
+predictors_coefficients_outtable = output.predictors_coeffcnts_smmry, /*Table that stores the predictor coefficients for each bootstrap sample.
 LIMITATION: The table name should be up to 30 characters.*/
-gini_outtable_development = outdata.gini_outtable_development, /*Table that stores the Gini coefficients for the development sample*/
-gini_outtable_validation = outdata.gini_outtable_validation, /*Table that stores the Gini coefficients for the development sample*/
-KS_outtable_development = outdata.KS_outtable_development, /*Table that stores the KS statistics for the development sample*/
-KS_outtable_validation = outdata.KS_outtable_validation /*Table that stores the KS statistics for the validation sample*/
+gini_outtable_development = output.gini_outtable_development, /*Table that stores the Gini coefficients for the development sample*/
+gini_outtable_validation = output.gini_outtable_validation, /*Table that stores the Gini coefficients for the development sample*/
+KS_outtable_development = output.KS_outtable_development, /*Table that stores the KS statistics for the development sample*/
+KS_outtable_validation = output.KS_outtable_validation /*Table that stores the KS statistics for the validation sample*/
 );
 
 /*Plot bootstrap diagnostics*/
 %plot_bootstrap_diagnostics(
 /*********************************************************************************/
 /*Input*/
-predictors_coefficients_outtable = outdata.predictors_coeffcnts_smmry /*Table that stores the predictor coefficients for each bootstrap sample.
+predictors_coefficients_outtable = output.predictors_coeffcnts_smmry /*Table that stores the predictor coefficients for each bootstrap sample.
 LIMITATION: The table name should be up to 30 characters.*/
 );
 
@@ -230,22 +231,22 @@ LIMITATION: The table name should be up to 30 characters.*/
 %rescore_bootstrap_coefficients(
 /*********************************************************************************/
 /*Input*/
-predictors_coefficients_outtable = outdata.predictors_coeffcnts_smmry, /*Table that stores the predictor coefficients for each bootstrap sample.
+predictors_coefficients_outtable = output.predictors_coeffcnts_smmry, /*Table that stores the predictor coefficients for each bootstrap sample.
 LIMITATION: The table name should be up to 30 characters.*/
-modelling_data_development = outdata.Modelling_data_bt_development, /*Development data that will be used to create a logistic regression model*/
+modelling_data_development = output.Modelling_data_bt_development, /*Development data that will be used to create a logistic regression model*/
 target_variable = &target_variable_name., /*Name of target variable*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
-bootstrap_score_dataset = outdata.bootstrap_score_dataset_dev, /*Dataset that contains the target variable, the weight variable and the predicted probabilities*/
-GINI_outdset = outdata.bootstrap_GINI_dev /*Dataset that contains the Gini coefficient*/
+bootstrap_score_dataset = output.bootstrap_score_dataset_dev, /*Dataset that contains the target variable, the weight variable and the predicted probabilities*/
+GINI_outdset = output.bootstrap_GINI_dev /*Dataset that contains the Gini coefficient*/
 );
 
 %transform_prob_to_scorecard(
 /*********************************************************************************/
 /*Input*/
-input_pred_prob_dataset = outdata.bootstrap_score_dataset_dev, /*Input dataset that has the estimated 
+input_pred_prob_dataset = output.bootstrap_score_dataset_dev, /*Input dataset that has the estimated 
 probability.*/
 probability_variable = IP_1, /*Variable that has the probabilities for the outcome*/
 odds = 30, /*Specifies the Non-Event/Event odds that correspond to the score value that you 
@@ -260,29 +261,29 @@ Set to 0 if the higher the event rate the higher the score, and set to 1 if the 
 the lower the score.*/
 /*********************************************************************************/
 /*Output*/
-output_score_dataset = outdata.bootstrap_score_dev /*Output dataset that has the computated
+output_score_dataset = output.bootstrap_score_dev /*Output dataset that has the computated
 scorecard value. The name of the new field is "scorecard".*/
 );
 
 %rescore_bootstrap_coefficients(
 /*********************************************************************************/
 /*Input*/
-predictors_coefficients_outtable = outdata.predictors_coeffcnts_smmry, /*Table that stores the predictor coefficients for each bootstrap sample.
+predictors_coefficients_outtable = output.predictors_coeffcnts_smmry, /*Table that stores the predictor coefficients for each bootstrap sample.
 LIMITATION: The table name should be up to 30 characters.*/
-modelling_data_development = outdata.Modelling_data_bt_validation, /*Development data that will be used to create a logistic regression model*/
+modelling_data_development = output.Modelling_data_bt_validation, /*Development data that will be used to create a logistic regression model*/
 target_variable = &target_variable_name., /*Name of target variable*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
-bootstrap_score_dataset = outdata.bootstrap_score_dataset_val, /*Dataset that contains the target variable, the weight variable and the predicted probabilities*/
-GINI_outdset = outdata.bootstrap_GINI_val /*Dataset that contains the Gini coefficient*/
+bootstrap_score_dataset = output.bootstrap_score_dataset_val, /*Dataset that contains the target variable, the weight variable and the predicted probabilities*/
+GINI_outdset = output.bootstrap_GINI_val /*Dataset that contains the Gini coefficient*/
 );
 
 %transform_prob_to_scorecard(
 /*********************************************************************************/
 /*Input*/
-input_pred_prob_dataset = outdata.bootstrap_score_dataset_val, /*Input dataset that has the estimated 
+input_pred_prob_dataset = output.bootstrap_score_dataset_val, /*Input dataset that has the estimated 
 probability.*/
 probability_variable = IP_1, /*Variable that has the probabilities for the outcome*/
 odds = 30, /*Specifies the Non-Event/Event odds that correspond to the score value that you 
@@ -297,15 +298,15 @@ Set to 0 if the higher the event rate the higher the score, and set to 1 if the 
 the lower the score.*/
 /*********************************************************************************/
 /*Output*/
-output_score_dataset = outdata.bootstrap_score_val /*Output dataset that has the computated
+output_score_dataset = output.bootstrap_score_val /*Output dataset that has the computated
 scorecard value. The name of the new field is "scorecard".*/
 );
 
 %bootstrap_coefficients_estimate(
 /*********************************************************************************/
 /*Input*/
-modelling_data_development = outdata.Modelling_data_bt_development, /*Development data that will be used to create a logistic regression model*/
-modelling_data_validation = outdata.Modelling_data_bt_validation, /*Validation data that will be used to validate the logistic regression model*/
+modelling_data_development = output.Modelling_data_bt_development, /*Development data that will be used to create a logistic regression model*/
+modelling_data_validation = output.Modelling_data_bt_validation, /*Validation data that will be used to validate the logistic regression model*/
 target_variable = &target_variable_name.,  /*Name of target variable - leave blank if missing*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row. This should not be weight, 
@@ -320,12 +321,12 @@ sample selects all the bads and &bootsize. number of goods. This is to decrease 
 which can be very long - typically each bootstrap sample with ~300 variables takes about ~30 mins*/
 /*********************************************************************************/
 /*Output*/
-predictors_coefficients_outtable = outdata.predictors_cffcnts_smmry_one, /*Table that stores the predictor coefficients for each bootstrap sample.
+predictors_coefficients_outtable = output.predictors_cffcnts_smmry_one, /*Table that stores the predictor coefficients for each bootstrap sample.
 LIMITATION: The table name should be up to 30 characters.*/
-gini_outtable_development = outdata.gini_outtable_development_one, /*Table that stores the Gini coefficients for the development sample*/
-gini_outtable_validation = outdata.gini_outtable_validation_one, /*Table that stores the Gini coefficients for the development sample*/
-KS_outtable_development = outdata.KS_outtable_development_one, /*Table that stores the KS statistics for the development sample*/
-KS_outtable_validation = outdata.KS_outtable_validation_one /*Table that stores the KS statistics for the validation sample*/
+gini_outtable_development = output.gini_outtable_development_one, /*Table that stores the Gini coefficients for the development sample*/
+gini_outtable_validation = output.gini_outtable_validation_one, /*Table that stores the Gini coefficients for the development sample*/
+KS_outtable_development = output.KS_outtable_development_one, /*Table that stores the KS statistics for the development sample*/
+KS_outtable_validation = output.KS_outtable_validation_one /*Table that stores the KS statistics for the validation sample*/
 );
 /*********************************************************************************/
 /*********************************************************************************/

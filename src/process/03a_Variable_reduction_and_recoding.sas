@@ -57,11 +57,11 @@ progName = programName, /*Macro variable the contains the SAS file name*/
 progPath = programPath /*Macro variable that contains the path where the SAS file is stored*/
 );
 
-%include "&programPath.\99_Solution_parameter_configuration.sas";
+%include "&programPath.\000_Solution_parameter_configuration.sas";
 
 options compress=yes;
 
-libname outdata "&outpath.";
+libname output "&data_path.\output";
 
 %include "&macros_path.\merge_two_tables.sas";
 %include "&macros_path.\identify_numeric_variables.sas";
@@ -71,8 +71,8 @@ libname outdata "&outpath.";
 /*********************************************************************************/
 /*********************************************************************************/
 %let datetime_var = %sysfunc(compress(%sysfunc(datetime(),datetime20.0),':'));
-filename output3a "&output_files.\03a_variable_reduction_and_recoding_output_&datetime_var..log";
-filename logout3a "&output_files.\03a_variable_reduction_and_recoding_log_&datetime_var..log";
+filename output3a "&log_path.\03a_variable_reduction_and_recoding_output_&datetime_var..log";
+filename logout3a "&log_path.\03a_variable_reduction_and_recoding_log_&datetime_var..log";
 proc printto print=output3a log=logout3a new;
 run;
 /*********************************************************************************/
@@ -85,18 +85,18 @@ quit;
 %merge_two_tables(
 /*********************************************************************************/
 /*Input*/
-dataset_1 = outdata.num_vars_format_woe, /*Dataset 1 which will be on the left side of the join*/
-dataset_2 = outdata.Char_vars_format_woe, /*Dataset 1 which will be on the right side of the join*/
+dataset_1 = output.num_vars_format_woe, /*Dataset 1 which will be on the left side of the join*/
+dataset_2 = output.Char_vars_format_woe, /*Dataset 1 which will be on the right side of the join*/
 id_variable = &ID_variable_name., /*Name of ID (or key) variable that will be used to join the two tables*/
 /*********************************************************************************/
 /*Output*/
-merge_output_dataset = outdata.num_char_merge /*Output table from the join*/
+merge_output_dataset = output.num_char_merge /*Output table from the join*/
 );
 
 %identify_numeric_variables(
 /*********************************************************************************/
 /*Input*/
-input_table = outdata.num_char_merge/*numeric_vars_201503*/, /*Name of table that has the character variables*/
+input_table = output.num_char_merge/*numeric_vars_201503*/, /*Name of table that has the character variables*/
 target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
 id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
@@ -112,7 +112,7 @@ numeric_contents = numeric_variables_contents /*Name of the table that contain t
 %variable_reduction(
 /*********************************************************************************/
 /*Input*/
-input_dset = outdata.num_char_merge, /*The name of the dataset that contain all the numeric variables*/
+input_dset = output.num_char_merge, /*The name of the dataset that contain all the numeric variables*/
 numeric_vars = &numeric_variables_to_analyse., /*List of numeric variables that should be reduced*/
 maxeigen = 0.2, /*Argument in PROC VARCLUS. The largest permissible value of the second eigenvalue in each cluster. 
 The lower the value	the more splits will be performed.*/
@@ -120,23 +120,23 @@ target_variable = &target_variable_name., /*The name of the dependent variable (
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
 /*********************************************************************************/
 /*Output*/
-out_dset_one_var_per_cluster = outdata.out_dset_one_var_per_cluster, /*The output dataset that provides the list of variables that can be used for modelling. 
+out_dset_one_var_per_cluster = output.out_dset_one_var_per_cluster, /*The output dataset that provides the list of variables that can be used for modelling. 
 	The code keeps only one variable from every cluster - the variable that has the minimum 1-Rsquare. 
 	The lower the 1-Rsquare is the higher the variance explained by that variable in the cluster and the 
 	lower variable explained in other clusters.*/
-out_dset_all_vars = outdata.varclus_importance_weight_woe, /*The output dataset that has the result of PROC VARCLUS and the p-values from the 
+out_dset_all_vars = output.varclus_importance_weight_woe, /*The output dataset that has the result of PROC VARCLUS and the p-values from the 
 	two sample t-tests.*/
-varclus_ttest = outdata.varclus_ttest_woe /*The output dataset that has a summary of the VARCLUS output and the t-test output*/
+varclus_ttest = output.varclus_ttest_woe /*The output dataset that has a summary of the VARCLUS output and the t-test output*/
 ); 
 
 %recode_numeric_vars (
 /*********************************************************************************/
 /*Input*/
-input_dset = outdata.num_char_merge, /*The name of the dataset that contain all the numeric variables*/
+input_dset = output.num_char_merge, /*The name of the dataset that contain all the numeric variables*/
 target_variable = &target_variable_name., /*The name of the dependent variable (it should be binary)*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
 id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
-variable_reduction_output_dset = outdata.varclus_importance_weight_woe, /*out_dset_all_vars dataset that is produced from the variable_reduction macro*/
+variable_reduction_output_dset = output.varclus_importance_weight_woe, /*out_dset_all_vars dataset that is produced from the variable_reduction macro*/
 argument_transform = dominant, /*Use the following values: 
 no_transform: if the input variables will be used in the argument_function
 standardised: if the standardised values will be used in the argument_function
@@ -152,8 +152,8 @@ mean: for average
 */
 /*********************************************************************************/
 /*Output*/
-coded_vars_dset = outdata.coded_vars_min_d, /*Dataset that contains what function and transformation was applied to each cluster*/
-output_dset = outdata.numeric_vars_min_d /*Dataset that has the numeric variables transformed*/
+coded_vars_dset = output.coded_vars_min_d, /*Dataset that contains what function and transformation was applied to each cluster*/
+output_dset = output.numeric_vars_min_d /*Dataset that has the numeric variables transformed*/
 );
 
 /*********************************************************************************/

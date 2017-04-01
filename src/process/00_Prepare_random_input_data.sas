@@ -50,17 +50,17 @@ progName = programName, /*Macro variable the contains the SAS file name*/
 progPath = programPath /*Macro variable that contains the path where the SAS file is stored*/
 );
 
-%include "&programPath.\99_Solution_parameter_configuration.sas";
+%include "&programPath.\000_Solution_parameter_configuration.sas";
 
 options compress=yes;
 
-libname outdata "&outpath.";
+libname input "&data_path.\input";
 
 /*********************************************************************************/
 /*********************************************************************************/
 %let datetime_var = %sysfunc(compress(%sysfunc(datetime(),datetime20.0),':'));
-filename output0 "&output_files.\00_Prepare_input_data_output_&datetime_var..log";
-filename logout0 "&output_files.\00_Prepare_input_data_log_&datetime_var..log";
+filename output0 "&log_path.\00_Prepare_input_data_output_&datetime_var..log";
+filename logout0 "&log_path.\00_Prepare_input_data_log_&datetime_var..log";
 proc printto print=output0 log=logout0 new;
 run;
 /*********************************************************************************/
