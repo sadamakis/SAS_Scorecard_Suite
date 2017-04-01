@@ -81,8 +81,8 @@ select
 	t1.*
 	, t2.development_flag 
 from outdata.numeric_vars_min_d as t1
-left join outdata.Original_table_dev_val_split as t2
-on t1.transact_id = t2.transact_id
+left join &table_name._dev_val_split as t2
+on t1.&ID_variable_name. = t2.&ID_variable_name.
 ;
 quit;
 data outdata.Modelling_data_bt_development (drop= development_flag) outdata.Modelling_data_bt_validation (drop= development_flag);
@@ -96,9 +96,9 @@ run;
 /*********************************************************************************/
 /*Input*/
 input_table = outdata.Modelling_data_bt_development, /*Name of table that has the character variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -112,9 +112,9 @@ numeric_contents = num_variables_contents /*Name of the table that contain the c
 /*********************************************************************************/
 /*Input*/
 input_table = outdata.Modelling_data_bt_development, /*Name of table that has the character variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -123,7 +123,7 @@ character_contents = char_variables_contents /*Name of the table that contain th
 );
 %put &char_variables.;
 
-%let target_variable = bad_flag;
+%let target_variable = &target_variable_name.;
 proc sql noprint;
 select count(*) into: nlobs
 from outdata.Modelling_data_bt_development
@@ -139,9 +139,9 @@ modelling_data_development = outdata.Modelling_data_bt_development, /*Developmen
 LIMITATION: The table name should be up to 30 characters.*/
 modelling_data_validation = outdata.Modelling_data_bt_validation, /*Validation data that will be used to validate the logistic regression model. 
 LIMITATION: The table name should be up to 30 characters.*/
-target_variable = bad_flag,  /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name.,  /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row. This should not be weight, 
 as this name is reserved in the macro*/
 varlist_cont = &num_variables., /*List of continuous variables that will go in the model*/
@@ -194,8 +194,8 @@ quit;
 /*Input*/
 modelling_data_development = outdata.Modelling_data_bt_development, /*Development data that will be used to create a logistic regression model*/
 modelling_data_validation = outdata.Modelling_data_bt_validation, /*Validation data that will be used to validate the logistic regression model*/
-target_variable = bad_flag,  /*Name of target variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name.,  /*Name of target variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row. This should not be weight, 
 as this name is reserved in the macro*/
 varlist_cont = &predictors_in_the_model., /*List of continuous variables that will go in the model*/
@@ -233,8 +233,8 @@ LIMITATION: The table name should be up to 30 characters.*/
 predictors_coefficients_outtable = outdata.predictors_coeffcnts_smmry, /*Table that stores the predictor coefficients for each bootstrap sample.
 LIMITATION: The table name should be up to 30 characters.*/
 modelling_data_development = outdata.Modelling_data_bt_development, /*Development data that will be used to create a logistic regression model*/
-target_variable = bad_flag, /*Name of target variable*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name., /*Name of target variable*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -270,8 +270,8 @@ scorecard value. The name of the new field is "scorecard".*/
 predictors_coefficients_outtable = outdata.predictors_coeffcnts_smmry, /*Table that stores the predictor coefficients for each bootstrap sample.
 LIMITATION: The table name should be up to 30 characters.*/
 modelling_data_development = outdata.Modelling_data_bt_validation, /*Development data that will be used to create a logistic regression model*/
-target_variable = bad_flag, /*Name of target variable*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name., /*Name of target variable*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -306,8 +306,8 @@ scorecard value. The name of the new field is "scorecard".*/
 /*Input*/
 modelling_data_development = outdata.Modelling_data_bt_development, /*Development data that will be used to create a logistic regression model*/
 modelling_data_validation = outdata.Modelling_data_bt_validation, /*Validation data that will be used to validate the logistic regression model*/
-target_variable = bad_flag,  /*Name of target variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name.,  /*Name of target variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row. This should not be weight, 
 as this name is reserved in the macro*/
 varlist_cont = &predictors_in_the_model., /*List of continuous variables that will go in the model*/

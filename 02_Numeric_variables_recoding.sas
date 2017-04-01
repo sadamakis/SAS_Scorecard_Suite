@@ -76,10 +76,10 @@ quit;
 %numeric_missing(
 /*********************************************************************************/
 /*Input*/
-input_table = outdata.original_table, /*Name of table that has the numeric variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+input_table = &table_name., /*Name of table that has the numeric variables*/
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -89,10 +89,10 @@ output_table = outdata.numeric_missing /*Name of output table that will produce 
 %find_1_level_numeric(
 /*********************************************************************************/
 /*Input*/
-input_table = outdata.original_table, /*Name of table that has the numeric variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+input_table = &table_name., /*Name of table that has the numeric variables*/
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -114,10 +114,10 @@ output_table = outdata.numeric_summary /*Output table from the join*/
 %replace_numeric_missing_values(
 /*********************************************************************************/
 /*Input*/
-input_table = outdata.original_table, /*Name of table that has the numeric variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+input_table = &table_name., /*Name of table that has the numeric variables*/
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 numeric_summary = outdata.numeric_summary, /*Name of table that contains only the numeric variables that will be in the model*/
 /*********************************************************************************/
@@ -131,9 +131,9 @@ output_table = outdata.numeric_vars /*Name of table that will have the target va
 /*********************************************************************************/
 /*Input*/
 input_table = outdata.numeric_vars, /*Name of table that has the numeric variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -150,8 +150,8 @@ numeric_contents = numeric_variables_contents /*Name of the table that contain t
 input_dset = outdata.Numeric_vars, /*Name of the input dataset that contains the variables to be recoded, the target variable and the weight*/
 numeric_variables_list = &numeric_variables_to_analyse., /*List of numeric variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
 character_variables_list = , /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
-target_variable = bad_flag, /*Name of the target variable*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset*/
+target_variable = &target_variable_name., /*Name of the target variable*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset*/
 groups = 30, /*Number of binning groups for the numeric variables*/
 adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
 /*********************************************************************************/
@@ -165,9 +165,9 @@ output_formatted_data = outdata.numeric_vars_rcd_format_woe /*Original dataset, 
 /*********************************************************************************/
 /*Input*/
 input_dset = outdata.numeric_vars, /*Name of the input dataset that contains the variables we want to recode and the target variable*/
-target_variable = bad_flag, /*Name of the target variable*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset.*/
+target_variable = &target_variable_name., /*Name of the target variable*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
 vars_list = &numeric_variables_to_analyse., /*List of predictor variables that we want to transform to WOE*/
 recoded_var_prefix = num, /*Prefix for recoded variables*/
 num_groups = 30, /*Maximum number of groups we will originally split the predictor variables*/
@@ -195,9 +195,9 @@ output_recode_data = outdata.num_vars_format_woe /*Output table that contains th
 /*********************************************************************************/
 /*Input*/
 input_table = outdata.num_vars_format_woe, /*Name of table that has the numeric variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -213,8 +213,8 @@ numeric_contents = numeric_woe_contents /*Name of the table that contain the con
 input_dset = outdata.num_vars_format_woe, /*Name of the input dataset that contains the variables to be recoded, the target variable and the weight*/
 numeric_variables_list = &numeric_variables_woe., /*List of numeric variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
 character_variables_list = , /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
-target_variable = bad_flag, /*Name of the target variable*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset*/
+target_variable = &target_variable_name., /*Name of the target variable*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset*/
 groups = 30, /*Number of binning groups for the numeric variables*/
 adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
 /*********************************************************************************/

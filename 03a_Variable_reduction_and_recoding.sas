@@ -87,7 +87,7 @@ quit;
 /*Input*/
 dataset_1 = outdata.num_vars_format_woe, /*Dataset 1 which will be on the left side of the join*/
 dataset_2 = outdata.Char_vars_format_woe, /*Dataset 1 which will be on the right side of the join*/
-id_variable = transact_id, /*Name of ID (or key) variable that will be used to join the two tables*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable that will be used to join the two tables*/
 /*********************************************************************************/
 /*Output*/
 merge_output_dataset = outdata.num_char_merge /*Output table from the join*/
@@ -97,9 +97,9 @@ merge_output_dataset = outdata.num_char_merge /*Output table from the join*/
 /*********************************************************************************/
 /*Input*/
 input_table = outdata.num_char_merge/*numeric_vars_201503*/, /*Name of table that has the character variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -116,8 +116,8 @@ input_dset = outdata.num_char_merge, /*The name of the dataset that contain all 
 numeric_vars = &numeric_variables_to_analyse., /*List of numeric variables that should be reduced*/
 maxeigen = 0.2, /*Argument in PROC VARCLUS. The largest permissible value of the second eigenvalue in each cluster. 
 The lower the value	the more splits will be performed.*/
-target_variable = bad_flag, /*The name of the dependent variable (it should be binary)*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset.*/
+target_variable = &target_variable_name., /*The name of the dependent variable (it should be binary)*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
 /*********************************************************************************/
 /*Output*/
 out_dset_one_var_per_cluster = outdata.out_dset_one_var_per_cluster, /*The output dataset that provides the list of variables that can be used for modelling. 
@@ -133,9 +133,9 @@ varclus_ttest = outdata.varclus_ttest_woe /*The output dataset that has a summar
 /*********************************************************************************/
 /*Input*/
 input_dset = outdata.num_char_merge, /*The name of the dataset that contain all the numeric variables*/
-target_variable = bad_flag, /*The name of the dependent variable (it should be binary)*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset.*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
+target_variable = &target_variable_name., /*The name of the dependent variable (it should be binary)*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
 variable_reduction_output_dset = outdata.varclus_importance_weight_woe, /*out_dset_all_vars dataset that is produced from the variable_reduction macro*/
 argument_transform = dominant, /*Use the following values: 
 no_transform: if the input variables will be used in the argument_function

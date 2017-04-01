@@ -85,10 +85,10 @@ quit;
 %character_missing(
 /*********************************************************************************/
 /*Input*/
-input_table = outdata.original_table, /*Name of table that has the character variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+input_table = &table_name., /*Name of table that has the character variables*/
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -98,10 +98,10 @@ output_table = outdata.character_missing /*Name of output table that will produc
 %find_1_level_chars(
 /*********************************************************************************/
 /*Input*/
-input_table = outdata.original_table, /*Name of table that has the character variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+input_table = &table_name., /*Name of table that has the character variables*/
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -123,10 +123,10 @@ output_table = outdata.character_summary /*Output table from the join*/
 %replace_character_missing_values(
 /*********************************************************************************/
 /*Input*/
-input_table = outdata.original_table, /*Name of table that has the character variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+input_table = &table_name., /*Name of table that has the character variables*/
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 character_summary = outdata.character_summary, /*Name of table that contains only the character variables that will be in the model*/
 argument_missing_value_replace = M, /*Character that the missing values will be replaced with*/
@@ -139,9 +139,9 @@ output_table = outdata.character_vars_recode /*Name of table that will have the 
 /*********************************************************************************/
 /*Input*/
 input_table = outdata.character_vars_recode, /*Name of table that has the character variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -152,9 +152,9 @@ output_table = outdata.character_missing /*Name of output table that will produc
 /*********************************************************************************/
 /*Input*/
 input_table = outdata.character_vars_recode, /*Name of table that has the character variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -177,9 +177,9 @@ output_table = outdata.character_summary /*Output table from the join*/
 /*********************************************************************************/
 /*Input*/
 input_table = outdata.character_vars_recode, /*Name of table that has the character variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 character_summary = outdata.character_summary, /*Name of table that contains only the character variables that will be in the model*/
 argument_missing_value_replace = M, /*Character that the missing values will be replaced with*/
@@ -194,9 +194,9 @@ output_table = outdata.character_vars_rcd_iteration2 /*Name of table that will h
 /*********************************************************************************/
 /*Input*/
 input_table = outdata.character_vars_rcd_iteration2, /*Name of table that has the character variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -230,9 +230,9 @@ at this stage.*/
 /*********************************************************************************/
 /*Input*/
 input_table = outdata.character_vars_rcd_iteration2, /*Name of table that has the character variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 intable_num_levels = outdata.number_of_levels, /*Summary table with all the variables that will be checked and the number of levels*/
 n_levels_thres = 100, /*Discard variables that have more levels than this threshold (exclusive)*/
@@ -248,9 +248,9 @@ output_table = outdata.character_vars_rcd_iteration2 /*Name of output table that
 /*Input*/
 input_format_table = outdata.format_char_levels, /*Table that has the formats that will be used in PROC FORMAT*/
 input_dset = outdata.character_vars_rcd_iteration2, /*Name of table that has the variables to be collapsed*/
-target_variable = bad_flag, /*The name of the dependent variable (it should be binary)*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset.*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
+target_variable = &target_variable_name., /*The name of the dependent variable (it should be binary)*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
 number_of_levels_thres = 100, /*Inclusive threshold. The macro will select only variables with levels below this threshold*/
 /**************************************************************************/
 /*Output*/
@@ -274,9 +274,9 @@ output_table = outdata.character_vars_rcd_iteration3 /*Output table with the new
 /*********************************************************************************/
 /*Input*/
 input_table = outdata.character_vars_rcd_iteration3, /*Name of table that has the character variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -293,8 +293,8 @@ character_contents = char_var_analyse_contents /*Name of the table that contain 
 input_dset = outdata.character_vars_rcd_iteration3, /*Name of the input dataset that contains the variables to be recoded, the target variable and the weight*/
 numeric_variables_list = , /*List of numeric variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
 character_variables_list = &character_variables_to_analyse. /*&character_variables_to_analyse.*/, /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
-target_variable = bad_flag, /*Name of the target variable*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset*/
+target_variable = &target_variable_name., /*Name of the target variable*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset*/
 groups = 30, /*Number of binning groups for the numeric variables*/
 adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
 /*********************************************************************************/
@@ -311,9 +311,9 @@ output_formatted_data = outdata.char_original_rcd_format_woe /*Original dataset,
 /*********************************************************************************/
 /*Input*/
 input_dset = outdata.character_vars_rcd_iteration3, /*Name of the input dataset that contains the variables we want to recode and the target variable*/
-target_variable = bad_flag, /*Name of the target variable*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset.*/
+target_variable = &target_variable_name., /*Name of the target variable*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
 vars_list = &character_variables_to_analyse., /*List of predictor variables that we want to transform to WOE*/
 recoded_var_prefix = char, /*Prefix for recoded variables*/
 NOD_BIN_macro = &macros_path.\NOD_BIN_v13.sas, /*Path to NOD_BIN macro*/
@@ -340,9 +340,9 @@ output_recode_data = outdata.char_vars_format_woe /*Output table that contains t
 /*********************************************************************************/
 /*Input*/
 input_table = outdata.char_vars_format_woe, /*Name of table that has the character variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -358,8 +358,8 @@ numeric_contents = collapse_woe_contents /*Name of the table that contain the co
 input_dset = outdata.char_vars_format_woe, /*Name of the input dataset that contains the variables to be recoded, the target variable and the weight*/
 numeric_variables_list = &collapse_variables_woe., /*List of numeric variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
 character_variables_list = , /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
-target_variable = bad_flag, /*Name of the target variable*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset*/
+target_variable = &target_variable_name., /*Name of the target variable*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset*/
 groups = 30, /*Number of binning groups for the numeric variables*/
 adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
 /*********************************************************************************/
@@ -379,8 +379,8 @@ output_formatted_data = outdata.clpse_orignl_rcd_format_woe /*Original dataset, 
 /*Input*/
 input_dset = outdata.character_vars_rcd_iteration3, /*Name of table that has the variables to be collapsed*/
 variables_to_recode = &character_variables_to_analyse., /*List of variables that will be collapsed*/
-target_variable = bad_flag, /*The name of the dependent variable (it should be binary)*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset.*/
+target_variable = &target_variable_name., /*The name of the dependent variable (it should be binary)*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
 /**************************************************************************/
 /*Output*/
 output_format_table = outdata.format_char, /*Table that contains the format information*/
@@ -393,8 +393,8 @@ output_formatted_data = outdata.character_vars_rcd_format /*Table that contains 
 input_dset = outdata.character_vars_rcd_format, /*Name of the input dataset that contains the variables to be recoded, the target variable and the weight*/
 numeric_variables_list = , /*List of numeric variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
 character_variables_list = &character_variables_to_analyse. /*&character_variables_to_analyse.*/, /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
-target_variable = bad_flag, /*Name of the target variable*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset*/
+target_variable = &target_variable_name., /*Name of the target variable*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset*/
 groups = 30, /*Number of binning groups for the numeric variables*/
 adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
 /*********************************************************************************/

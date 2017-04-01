@@ -78,8 +78,8 @@ select
 	t1.*
 	, t2.development_flag 
 from outdata.numeric_vars_min_d as t1
-left join outdata.Original_table_dev_val_split as t2
-on t1.transact_id = t2.transact_id
+left join &table_name._dev_val_split as t2
+on t1.&ID_variable_name. = t2.&ID_variable_name.
 ;
 quit;
 data outdata.Modelling_data_development (drop= development_flag) outdata.Modelling_data_validation (drop= development_flag);
@@ -94,9 +94,9 @@ run;
 /*Input*/
 modelling_data_development = outdata.Modelling_data_development, /*Development data that will be used to create a logistic regression model*/
 modelling_data_validation = outdata.Modelling_data_validation, /*Validation data that will be used to validate the logistic regression model*/
-target_variable = bad_flag,  /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name.,  /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 model_selection_method = stepwise, /*Choose from none, stepwise, backward, forward, score*/
 slentry = 0.05, /*Entry criteria for model selection method*/
@@ -127,8 +127,8 @@ ModelBuildingSummary option in PROC LOGISTIC*/
 input_number_variables_in_model = 3, /*Number of variables that will be in the model.*/
 modelling_data_development = outdata.Modelling_data_development, /*Development data that will be used to create a logistic regression model*/
 modelling_data_validation = outdata.Modelling_data_validation, /*Validation data that will be used to validate the logistic regression model*/
-target_variable = bad_flag,  /*Name of target variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name.,  /*Name of target variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /***********************************************************************************/
 /*Output*/
@@ -188,7 +188,7 @@ scorecard value. The name of the new field is "scorecard".*/
 /**************************************************************************/
 /*Input*/
 input_dataset_prob = outdata.Outtable_development_score_set, /*Name of dataset that should have the score or predicted probability, e.g. output table from PROC LOGISTIC*/
-target_variable = bad_flag,  /*Name of target variable - leave blank if missing*/
+target_variable = &target_variable_name.,  /*Name of target variable - leave blank if missing*/
 score_variable = IP_1, /*Score variable should be, e.g., scorecard output or predicted probability*/
 number_of_groups = 20, /*Score variable will be split in groups using PROC RANK so that actual and predicted 
 probabilities will be calculated in each band. The higher the number of groups the better the Gini 

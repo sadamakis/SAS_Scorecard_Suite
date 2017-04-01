@@ -69,15 +69,15 @@ run;
 proc datasets lib=work kill nolist memtype=data;
 quit;
 
-data outdata.original_table (drop= i u1);
+data &table_name. (drop= i u1);
 do i=1 to 10000;
 /***********************************************************************************************/
 /*Target variable*/
-	bad_flag = RAND('BERNOULLI', 0.5);
+	&target_variable_name. = RAND('BERNOULLI', 0.5);
 /*ID variable*/
-	transact_id = i;
+	&ID_variable_name. = i;
 /*Sampling weight*/
-	weight = RAND('GAMMA', 1) + 0.5;
+	&weight_variable_name. = RAND('GAMMA', 1) + 0.5;
 /***********************************************************************************************/
 	u1 = uniform(123);
 	if u1<0.1 then do;
@@ -129,7 +129,7 @@ do i=1 to 10000;
 		character5 = 'Y';
 	end;
 
-	if bad_flag=1 then do;
+	if &target_variable_name.=1 then do;
 		numeric6 = RAND('NORMAL', 1000, 70);
 		numeric7 = RAND('POISSON', 500);
 		character6 = strip(put(RAND('POISSON', 10), 6.));
@@ -159,8 +159,8 @@ output;
 end;
 run;
 
-data outdata.original_table_dev_val_split;
-	set outdata.original_table (keep= transact_id);
+data &table_name._dev_val_split;
+	set &table_name. (keep= &ID_variable_name.);
 /*Set the flag that identifies development dataset (development_flag=1) and validation dataset (development_flag=0)*/
 	development_flag = RAND('BERNOULLI', 0.7);;
 run;

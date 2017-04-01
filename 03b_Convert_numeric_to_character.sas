@@ -79,9 +79,9 @@ quit;
 /**************************************************************************/
 /*Input*/
 input_dset = outdata.Numeric_vars_min_d, /*Input table that contains the numeric variables that should be converted to character*/
-target_variable = bad_flag, /*The name of the dependent variable (it should be binary)*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset.*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
+target_variable = &target_variable_name., /*The name of the dependent variable (it should be binary)*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
 character_format = 13.10, /*Format inside the PUT statement*/
 /**************************************************************************/
 /*Output*/
@@ -92,9 +92,9 @@ output_dset = outdata.Numeric_vars_min_d_char /*Name of table that the numeric v
 /*********************************************************************************/
 /*Input*/
 input_table = outdata.Numeric_vars_min_d_char, /*Name of table that has the character variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -110,8 +110,8 @@ character_contents = char_var_recode_contents /*Name of the table that contain t
 input_dset = outdata.Numeric_vars_min_d_char, /*Name of the input dataset that contains the variables to be recoded, the target variable and the weight*/
 numeric_variables_list = , /*List of numeric variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
 character_variables_list = &char_vars_to_recode. /*&character_variables_to_analyse.*/, /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
-target_variable = bad_flag, /*Name of the target variable*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset*/
+target_variable = &target_variable_name., /*Name of the target variable*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset*/
 groups = 30, /*Number of binning groups for the numeric variables*/
 adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
 /*********************************************************************************/
@@ -128,9 +128,9 @@ output_formatted_data = outdata.char_convert_rcd_format_woe /*Original dataset, 
 /*********************************************************************************/
 /*Input*/
 input_dset = outdata.Numeric_vars_min_d_char, /*Name of the input dataset that contains the variables we want to recode and the target variable*/
-target_variable = bad_flag, /*Name of the target variable*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset.*/
+target_variable = &target_variable_name., /*Name of the target variable*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
 vars_list = &char_vars_to_recode., /*List of predictor variables that we want to transform to WOE*/
 recoded_var_prefix = var, /*Prefix for recoded variables*/
 NOD_BIN_macro = &macros_path.\NOD_BIN_v13.sas, /*Path to NOD_BIN macro*/
@@ -157,9 +157,9 @@ output_recode_data = outdata.char_convert_vars_format_woe /*Output table that co
 /*********************************************************************************/
 /*Input*/
 input_table = outdata.char_convert_vars_format_woe, /*Name of table that has the character variables*/
-target_variable = bad_flag, /*Name of target variable - leave blank if missing*/
-id_variable = transact_id, /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset. 
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
@@ -175,8 +175,8 @@ numeric_contents = convert_collapse_woe_contents /*Name of the table that contai
 input_dset = outdata.char_convert_vars_format_woe, /*Name of the input dataset that contains the variables to be recoded, the target variable and the weight*/
 numeric_variables_list = &convert_collapse_variables_woe., /*List of numeric variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
 character_variables_list = , /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
-target_variable = bad_flag, /*Name of the target variable*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset*/
+target_variable = &target_variable_name., /*Name of the target variable*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset*/
 groups = 30, /*Number of binning groups for the numeric variables*/
 adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
 /*********************************************************************************/
@@ -196,8 +196,8 @@ output_formatted_data = outdata.clpse_cnvrt_rcd_format_woe /*Original dataset, b
 /*Input*/
 input_dset = outdata.Numeric_vars_min_d_char, /*Name of table that has the variables to be collapsed*/
 variables_to_recode = &char_vars_to_recode., /*List of variables that will be collapsed*/
-target_variable = bad_flag, /*The name of the dependent variable (it should be binary)*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset.*/
+target_variable = &target_variable_name., /*The name of the dependent variable (it should be binary)*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
 /**************************************************************************/
 /*Output*/
 output_format_table = outdata.format_char_numeric, /*Table that contains the format information*/
@@ -210,8 +210,8 @@ output_formatted_data = outdata.Numeric_vars_min_d_format /*Table that contains 
 input_dset = outdata.Numeric_vars_min_d_format, /*Name of the input dataset that contains the variables to be recoded, the target variable and the weight*/
 numeric_variables_list = , /*List of numeric variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
 character_variables_list = &char_vars_to_recode. /*&character_variables_to_analyse.*/, /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
-target_variable = bad_flag, /*Name of the target variable*/
-weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset*/
+target_variable = &target_variable_name., /*Name of the target variable*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset*/
 groups = 30, /*Number of binning groups for the numeric variables*/
 adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
 /*********************************************************************************/
