@@ -37,12 +37,15 @@ retain iteration;
 	keep iteration;
 run;
 
+goptions reset=all;
+symbol1 color=blue value=dot interpol=join;
 proc gplot data=predictors_coefficients_summary;
 %do i=1 %to %sysfunc(countw(&bootstrap_variables.));
 %let var=%scan(&bootstrap_variables., &i.);
 	 plot &var._mean*iteration;
 %end;
 run;
+goptions reset=all;
 
 proc sql noprint;
 	drop table &predictors_coefficients_outtable._c;

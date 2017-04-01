@@ -229,6 +229,7 @@ proc gplot data=outdata.AUC_outdset;
       plot true_positive_rate*false_positive_rate / overlay haxis=axis1 vaxis=axis2;
       title "ROC curve";
 run;
+goptions reset=all;
 
 goptions reset=all;
 axis1 label=("Score band") /*order=(0 to 10 by 1)*/;
@@ -239,6 +240,7 @@ proc gplot data=outdata.predicted_expected_outdset;
 	plot (target_actual_prob target_predicted_prob)*sscoreband / overlay legend=legend1 haxis=axis1 vaxis=axis2;
 	title "Scorecard performance";
 run;
+goptions reset=all;
 /*********************************************************************************/
 /*********************************************************************************/
 
