@@ -19,18 +19,34 @@ material. In addition, Sotirios Adamakis will provide no support for the materia
 /* Code Version:             ---  v1.0                                                                  */
 /*------------------------------------------------------------------------------------------------------*/
 
+/*Macro that stores the name and the path of the current program into macro variables*/
+%macro program
+(
 /*********************************************************************************/
-/***********   Start parameters configuration    ***************/
+/*Output*/
+progName, /*Macro variable the contains the SAS file name*/
+progPath /*Macro variable that contains the path where the SAS file is stored*/
+);
+%global &progName. &progPath.;
+
+    %let progPathName = %sysfunc(GetOption(SysIn));
+    %* if running in interactive mode, the above line will not work, and the next line should;
+    %if  %length(&progPathName) = 0 %then %let progPathName = %sysget(SAS_ExecFilePath);
+
+	%let &progName. = %scan(&progPathName., -1, '\');
+	%let progColumn = %eval(%index(&progPathName., &&&progName..)-2);
+	%let &progPath. = %substr(&progPathName., 1, &progColumn.);
+
+%mend program;
+%program
+(
 /*********************************************************************************/
-/*Set path that contains the macros*/
-%let macros_path = X:\Decision_Science\01_Model_Development\21_VBL_Cards\02_Acquisitions\VB_UKCC_AF001\Code\Productionise macros\Scorecard_suite;
-/*Set path that will have the output and log files that are produced from this code*/
-%let output_files = X:\Decision_Science\01_Model_Development\21_VBL_Cards\02_Acquisitions\VB_UKCC_AF001\Code\Productionise macros\Scorecard_suite\Logs;
-/*Set the path that contains the output tables from this code*/
-%let outpath = X:\Data_Mart\Analysis\Decision_Science\01_UK\Vanquis\Cards\02_Acquisitions\01_Model_Development\VB_UKCC_AF01\01_Database_Design\Productionise macros;
-/*********************************************************************************/
-/***********   End parameters configuration     ***************/
-/*********************************************************************************/
+/*Output*/
+progName = programName, /*Macro variable the contains the SAS file name*/
+progPath = programPath /*Macro variable that contains the path where the SAS file is stored*/
+);
+
+%include "&programPath.\99_Solution_parameter_configuration.sas";
 
 options compress=yes;
 
