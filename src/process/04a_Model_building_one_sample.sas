@@ -188,8 +188,9 @@ scorecard value. The name of the new field is "scorecard".*/
 %roc_curve_gini_actual_vs_predctd(
 /**************************************************************************/
 /*Input*/
-input_dataset_prob = output.Outtable_development_score_set, /*Name of dataset that should have the score or predicted probability, e.g. output table from PROC LOGISTIC*/
+input_dataset_prob = output.Outtable_development_score_table, /*Name of dataset that should have the score or predicted probability, e.g. output table from PROC LOGISTIC*/
 target_variable = &target_variable_name.,  /*Name of target variable - leave blank if missing*/
+weight_variable = weight, /*Name of weight variable in the input dataset. This should exist in the dataset*/
 score_variable = IP_1, /*Score variable should be, e.g., scorecard output or predicted probability*/
 number_of_groups = 20, /*Score variable will be split in groups using PROC RANK so that actual and predicted 
 probabilities will be calculated in each band. The higher the number of groups the better the Gini 
@@ -208,7 +209,7 @@ proc gplot data=&AUC_outdset.;
 run;
 */
 GINI_outdset = output.GINI_outdset, /*Dataset that contains the Gini coefficient approximation. Trapezoidal rule is used for the approximation.*/
-predicted_expected_outdset = output.predicted_expected_outdset /*Output dataset that contains actual and predicted bad rate per score band. 
+predicted_expected_outdset = output.predicted_expected_outdset, /*Output dataset that contains actual and predicted bad rate per score band. 
 Use the following code to produce the graph of actual vs expected bad rate per score band:
 goptions reset=all;
 axis1 label=("Score band") order=(0 to 10 by 1);
@@ -220,28 +221,50 @@ proc gplot data=&predicted_expected_outdset.;
 	title "Scorecard performance";
 run;
 */
+lift_curve_dataset = output.lift_curve_dataset /*Output dataset that will be used to produce the lift curves*/
 );
 
 goptions reset=all;
-axis1 label=("False positive rate") order=(0 to 1 by 0.10);
-axis2 label=("True positive rate") order=(0 to 1 by 0.10);
+axis1 label=("False Positive Rate") order=(0 to 1 by 0.10);
+axis2 label=("True Positive Rate") order=(0 to 1 by 0.10);
 proc gplot data=output.AUC_outdset;
       symbol v=dot h=1 interpol=join;
       plot true_positive_rate*false_positive_rate / overlay haxis=axis1 vaxis=axis2;
-      title "ROC curve";
+      title "ROC Curve";
 run;
 goptions reset=all;
 
 goptions reset=all;
-axis1 label=("Score band") /*order=(0 to 10 by 1)*/;
-axis2 label=("Bad rate") /*order=(0 to 0.01 by 0.010)*/;
+axis1 label=("Score Band") /*order=(0 to 10 by 1)*/;
+axis2 label=("Bad Rate") /*order=(0 to 0.01 by 0.010)*/;
 Legend1 value=(color=blue height=1 'Actual bad rate' 'Predicted bad rate');
 proc gplot data=output.predicted_expected_outdset;
 	symbol v=dot h=1 interpol=join;
 	plot (target_actual_prob target_predicted_prob)*sscoreband / overlay legend=legend1 haxis=axis1 vaxis=axis2;
-	title "Scorecard performance";
+	title "Scorecard Performance";
 run;
 goptions reset=all;
+
+goptions reset=all;
+axis1 label=("Score Band");
+axis2 label=("Lift");
+proc gplot data=output.Lift_curve_dataset;
+      symbol v=dot h=1 interpol=join;
+      plot lift*reversed_n / overlay haxis=axis1 vaxis=axis2;
+      title "Lift Curve";
+run;
+goptions reset=all;
+
+goptions reset=all;
+axis1 label=("Score Band");
+axis2 label=("Cumulative Lift");
+proc gplot data=output.Lift_curve_dataset;
+      symbol v=dot h=1 interpol=join;
+      plot cumulative_lift*reversed_n / overlay haxis=axis1 vaxis=axis2;
+      title "Cumulative Lift Curve";
+run;
+goptions reset=all;
+
 /*********************************************************************************/
 /*********************************************************************************/
 

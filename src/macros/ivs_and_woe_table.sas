@@ -65,7 +65,7 @@ run;
 data pt (drop= numrec);
 	set pt;
 	numrec+1;
-	if numrec=1 then col1 = col1 + 0.0000000001;
+	if numrec=1 then col1 = col1 + 1E-30;
 run;
 %if %substr(&currvar_num., %length(&currvar_num.), 1)=0 or 
 %substr(&currvar_num., %length(&currvar_num.), 1)=1 or
