@@ -1,0 +1,3 @@
+- Table name that stores the predictor coefficients for each bootstrap sample should be up to 30 characters
+- Development and validation data that will be used to create a logistic regression model with bootstrap model selection should be up to 30 characters
+- Target variable should be numeric and should have values 0 and 1 only, i.e. no missings or any other values.
