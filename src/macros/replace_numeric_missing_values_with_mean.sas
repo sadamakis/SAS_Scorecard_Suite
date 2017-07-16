@@ -3,16 +3,25 @@
 %macro replace_numeric_missing_values(
 /*********************************************************************************/
 /*Input*/
-input_table, /*Name of table that has the character variables*/
+input_table, /*Name of table that has the numeric variables*/
 target_variable, /*Name of target variable - leave blank if missing*/
 id_variable, /*Name of ID (or key) variable - leave blank if missing*/
 weight_variable, /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 numeric_summary, /*Name of table that contains only the character variables that will be in the model*/
+replace_percentage, /*Takes values 0-100. Replace missing values with mean for all variables that missing percentage
+is below this threshold. For numeric variables with missing percentage above this threshold, the missing
+values are left as missing.*/
 /*********************************************************************************/
 /*Output*/
 output_table /*Name of table that will have the target variable, the ID variable, the weight variable and all the character variables that will be in the model with missing values replaced*/
 );
+proc sql noprint;
+select name into :numeric_variables_to_replace separated by ' '
+from &numeric_summary.
+where pctmiss <= &replace_percentage.
+;
+quit;
 proc sql noprint;
 select name into :numeric_variables_to_analyse separated by ' '
 from &numeric_summary.
@@ -26,7 +35,7 @@ run;
 %else %do;
 proc stdize data=&input_table. (keep= &numeric_variables_to_analyse. &target_variable. &id_variable. &weight_variable.) 
 	out=&output_table. missing=mean reponly;
-  var &numeric_variables_to_analyse.;
+  var &numeric_variables_to_replace.;
 run;
 %end;
 %mend replace_numeric_missing_values;

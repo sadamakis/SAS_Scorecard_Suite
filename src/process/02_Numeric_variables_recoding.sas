@@ -121,6 +121,9 @@ id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank i
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
 numeric_summary = output.numeric_summary, /*Name of table that contains only the numeric variables that will be in the model*/
+replace_percentage = 5, /*Takes values 0-100. Replace missing values with mean for all variables that missing percentage
+is below this threshold. For numeric variables with missing percentage above this threshold, the missing
+values are left as missing.*/
 /*********************************************************************************/
 /*Output*/
 output_table = output.numeric_vars /*Name of table that will have the target variable, the ID variable, the weight variable and all the numeric variables that will be in the model with missing values replaced*/
@@ -153,7 +156,7 @@ numeric_variables_list = &numeric_variables_to_analyse., /*List of numeric varia
 character_variables_list = , /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
 target_variable = &target_variable_name., /*Name of the target variable*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset*/
-groups = 30, /*Number of binning groups for the numeric variables*/
+groups = 30, /*Maximum number of binning groups for the numeric variables*/
 adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
 /*********************************************************************************/
 /*Output*/
@@ -216,7 +219,7 @@ numeric_variables_list = &numeric_variables_woe., /*List of numeric variables to
 character_variables_list = , /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
 target_variable = &target_variable_name., /*Name of the target variable*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset*/
-groups = 30, /*Number of binning groups for the numeric variables*/
+groups = 30, /*Maximum number of binning groups for the numeric variables*/
 adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
 /*********************************************************************************/
 /*Output*/
