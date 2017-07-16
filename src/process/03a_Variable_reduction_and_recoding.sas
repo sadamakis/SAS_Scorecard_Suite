@@ -85,8 +85,10 @@ quit;
 %merge_two_tables(
 /*********************************************************************************/
 /*Input*/
-dataset_1 = output.num_vars_format_woe, /*Dataset 1 which will be on the left side of the join*/
-dataset_2 = output.Char_vars_format_woe, /*Dataset 1 which will be on the right side of the join*/
+dataset_1 = output.num_vars_format_woe, /*Dataset 1, which will be on the left side of the join*/
+dataset_2 = output.Char_vars_format_woe, /*Dataset 2, which will be on the right side of the join*/
+/*- Use dataset_2=output.Char_vars_format_woe for the WOE transformation of the character variables*/
+/*- Use dataset_2=output.clpsed_char_to_binary for the binary variables that are derived from the WOE transformations of the character variables*/
 id_variable = &ID_variable_name., /*Name of ID (or key) variable that will be used to join the two tables*/
 /*********************************************************************************/
 /*Output*/

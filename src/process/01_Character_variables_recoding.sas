@@ -69,6 +69,8 @@ libname output "&data_path.\output";
 %include "&macros_path.\green.sas";
 %include "&macros_path.\run_green_wrapper.sas";
 %include "&macros_path.\ivs_and_woe_table.sas";
+%include "&macros_path.\character_to_binary_transreg.sas";
+%include "&macros_path.\convert_numeric_to_character.sas";
 
 /*********************************************************************************/
 /*********************************************************************************/
@@ -136,65 +138,12 @@ argument_missing_value_replace = M, /*Character that the missing values will be 
 output_table = output.character_vars_recode /*Name of table that will have the target variable, the ID variable, the weight variable and all the character variables that will be in the model with missing values replaced*/
 );
 
-%character_missing(
-/*********************************************************************************/
-/*Input*/
-input_table = output.character_vars_recode, /*Name of table that has the character variables*/
-target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
-id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
-If there are no weights in the dataset then create a field with values 1 in every row*/
-/*********************************************************************************/
-/*Output*/
-output_table = output.character_missing /*Name of output table that will produce a summary for the missing values*/
-);
-
-%find_1_level_chars(
-/*********************************************************************************/
-/*Input*/
-input_table = output.character_vars_recode, /*Name of table that has the character variables*/
-target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
-id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
-If there are no weights in the dataset then create a field with values 1 in every row*/
-/*********************************************************************************/
-/*Output*/
-output_table = output.find_1_level_chars /*Name of output table that will produce a summary for the missing values*/
-);
-
-%missing_has_1_level_join(
-/*********************************************************************************/
-/*Input*/
-character_missing_table = output.character_missing, /*Output table from character_missing macro*/
-has_1_level_table = output.find_1_level_chars, /*Output table from find_1_level_chars macro*/
-argument_missing_percent = 99, /*Missing percentage threshold for selecting variables. For selecting all variables, set this to 100*/
-argument_has_1_level = 0, /*Argument for selecting variables that have more than one level. Set this to 0 for selecting variables with more than 1 level*/
-/*********************************************************************************/
-/*Output*/
-output_table = output.character_summary /*Output table from the join*/
-);
-
-%replace_character_missing_values(
-/*********************************************************************************/
-/*Input*/
-input_table = output.character_vars_recode, /*Name of table that has the character variables*/
-target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
-id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
-weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
-If there are no weights in the dataset then create a field with values 1 in every row*/
-character_summary = output.character_summary, /*Name of table that contains only the character variables that will be in the model*/
-argument_missing_value_replace = M, /*Character that the missing values will be replaced with*/
-/*********************************************************************************/
-/*Output*/
-output_table = output.character_vars_rcd_iteration2 /*Name of table that will have the target variable, the ID variable, the weight variable and all the character variables that will be in the model with missing values replaced*/
-);
-
 /*********************************************************************************/
 /*Select the variables that will be transformed to WOE*/
 %identify_character_variables(
 /*********************************************************************************/
 /*Input*/
-input_table = output.character_vars_rcd_iteration2, /*Name of table that has the character variables*/
+input_table = output.character_vars_recode, /*Name of table that has the character variables*/
 target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
 id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
@@ -211,7 +160,7 @@ character_contents = char_var_contents /*Name of the table that contain the cont
 %number_of_levels(
 /**************************************************************************/
 /*Input*/
-input_table = output.character_vars_rcd_iteration2, /*Table that has the variables the variables that we would like to check the number of levels*/
+input_table = output.character_vars_recode, /*Table that has the variables the variables that we would like to check the number of levels*/
 list_of_variables = &char_var_levels., /*List of variables of which the number of levels will be produced*/
 /**************************************************************************/
 /*Output*/
@@ -230,7 +179,7 @@ at this stage.*/
 %drop_char_vars_with_many_levels(
 /*********************************************************************************/
 /*Input*/
-input_table = output.character_vars_rcd_iteration2, /*Name of table that has the character variables*/
+input_table = output.character_vars_recode, /*Name of table that has the character variables*/
 target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
 id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
@@ -239,7 +188,7 @@ intable_num_levels = output.number_of_levels, /*Summary table with all the varia
 n_levels_thres = 100, /*Discard variables that have more levels than this threshold (exclusive)*/
 /*********************************************************************************/
 /*Output*/
-output_table = output.character_vars_rcd_iteration2 /*Name of output table that has predictors with acceptable number of levels*/
+output_table = output.character_vars_recode /*Name of output table that has predictors with acceptable number of levels*/
 );
 /**************************************************************************/
 /**************************************************************************/
@@ -248,25 +197,25 @@ output_table = output.character_vars_rcd_iteration2 /*Name of output table that 
 /**************************************************************************/
 /*Input*/
 input_format_table = output.format_char_levels, /*Table that has the formats that will be used in PROC FORMAT*/
-input_dset = output.character_vars_rcd_iteration2, /*Name of table that has the variables to be collapsed*/
+input_dset = output.character_vars_recode, /*Name of table that has the variables to be collapsed*/
 target_variable = &target_variable_name., /*The name of the dependent variable (it should be binary)*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
 id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
 number_of_levels_thres = 100, /*Inclusive threshold. The macro will select only variables with levels below this threshold*/
 /**************************************************************************/
 /*Output*/
-output_format_table = output.character_vars_rcd_iteration3 /*Table that contains the formatted variables with the target, the weight and the id variables*/
+output_format_table = output.character_vars_rcd_iteration2 /*Table that contains the formatted variables with the target, the weight and the id variables*/
 );
 
 %change_character_lengths(
 /*********************************************************************************/
 /*Input*/
-table_to_change_lengths = output.character_vars_rcd_iteration3, /*Table name of which fields need to change the length*/
+table_to_change_lengths = output.character_vars_rcd_iteration2, /*Table name of which fields need to change the length*/
 character_summary = summary, /*Name of table that contains only the character variables that will be in the model*/
 minimum_length = 10, /*Minimum length that the new fields will have*/
 /*********************************************************************************/
 /*Output*/
-output_table = output.character_vars_rcd_iteration3 /*Output table with the new lengths*/
+output_table = output.character_vars_rcd_iteration2 /*Output table with the new lengths*/
 );
 
 /*********************************************************************************/
@@ -274,7 +223,7 @@ output_table = output.character_vars_rcd_iteration3 /*Output table with the new 
 %identify_character_variables(
 /*********************************************************************************/
 /*Input*/
-input_table = output.character_vars_rcd_iteration3, /*Name of table that has the character variables*/
+input_table = output.character_vars_rcd_iteration2, /*Name of table that has the character variables*/
 target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
 id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
@@ -291,12 +240,12 @@ character_contents = char_var_analyse_contents /*Name of the table that contain 
 %ivs_and_woe_table(
 /*********************************************************************************/
 /*Input*/
-input_dset = output.character_vars_rcd_iteration3, /*Name of the input dataset that contains the variables to be recoded, the target variable and the weight*/
+input_dset = output.character_vars_rcd_iteration2, /*Name of the input dataset that contains the variables to be recoded, the target variable and the weight*/
 numeric_variables_list = , /*List of numeric variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
-character_variables_list = &character_variables_to_analyse. /*&character_variables_to_analyse.*/, /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
+character_variables_list = &character_variables_to_analyse., /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
 target_variable = &target_variable_name., /*Name of the target variable*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset*/
-groups = 30, /*Number of binning groups for the numeric variables*/
+groups = 30, /*Maximum number of binning groups for the numeric variables*/
 adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
 /*********************************************************************************/
 /*Output*/
@@ -311,7 +260,7 @@ output_formatted_data = output.char_original_rcd_format_woe /*Original dataset, 
 %NOD_BIN_character_wrapper(
 /*********************************************************************************/
 /*Input*/
-input_dset = output.character_vars_rcd_iteration3, /*Name of the input dataset that contains the variables we want to recode and the target variable*/
+input_dset = output.character_vars_rcd_iteration2, /*Name of the input dataset that contains the variables we want to recode and the target variable*/
 target_variable = &target_variable_name., /*Name of the target variable*/
 id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
@@ -361,7 +310,7 @@ numeric_variables_list = &collapse_variables_woe., /*List of numeric variables t
 character_variables_list = , /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
 target_variable = &target_variable_name., /*Name of the target variable*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset*/
-groups = 30, /*Number of binning groups for the numeric variables*/
+groups = 30, /*Maximum number of binning groups for the numeric variables*/
 adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
 /*********************************************************************************/
 /*Output*/
@@ -378,7 +327,7 @@ output_formatted_data = output.clpse_orignl_rcd_format_woe /*Original dataset, b
 %run_green_wrapper(
 /**************************************************************************/
 /*Input*/
-input_dset = output.character_vars_rcd_iteration3, /*Name of table that has the variables to be collapsed*/
+input_dset = output.character_vars_rcd_iteration2, /*Name of table that has the variables to be collapsed*/
 variables_to_recode = &character_variables_to_analyse., /*List of variables that will be collapsed*/
 target_variable = &target_variable_name., /*The name of the dependent variable (it should be binary)*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
@@ -393,10 +342,10 @@ output_formatted_data = output.character_vars_rcd_format /*Table that contains t
 /*Input*/
 input_dset = output.character_vars_rcd_format, /*Name of the input dataset that contains the variables to be recoded, the target variable and the weight*/
 numeric_variables_list = , /*List of numeric variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
-character_variables_list = &character_variables_to_analyse. /*&character_variables_to_analyse.*/, /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
+character_variables_list = &character_variables_to_analyse., /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
 target_variable = &target_variable_name., /*Name of the target variable*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset*/
-groups = 30, /*Number of binning groups for the numeric variables*/
+groups = 30, /*Maximum number of binning groups for the numeric variables*/
 adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
 /*********************************************************************************/
 /*Output*/
@@ -404,6 +353,80 @@ inf_val_outds = output.character_information_value, /*Dataset with all the infor
 woe_format_outds = output.character_woe_format_dataset, /*Dataset with the Weight of Evidence variables*/
 output_formatted_data = output.character_vars_rcd_format_woe /*Original dataset, but with WOE variables instead of the original variables*/
 );
+/**************************************************************************/
+/**************************************************************************/
+
+/**************************************************************************/
+/**************************************************************************/
+/*Alternative way that converts character variables to binary*/
+/*Convert original character variables to binary*/
+%character_to_binary_transreg(
+/*********************************************************************************/
+/*Input*/
+input_table = output.character_vars_rcd_iteration2, /*Table that has the character variables that will be convert to binary*/
+character_variables_list = &character_variables_to_analyse., /*List of character variables separated by space*/
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
+If there are no weights in the dataset then create a field with values 1 in every row*/
+keep_all_levels = 0, /*Set to 1 to keep all the levels from the character variables and 0 to keep all the levels 
+apart from one level which will be the reference level*/
+/*********************************************************************************/
+/*Output*/
+output_design_table = output.original_char_to_binary, /*Table that has the binary variable only*/
+output_contents_table = output.original_char_to_binary_contents /*Table that has the labels of the binary variables, so that it will be possible to 
+reference them later.*/
+);
+/**************************************************************************/
+/*Convert colapsed WOE character variables to binary*/
+%convert_numeric_to_character(
+/**************************************************************************/
+/*Input*/
+input_dset = output.Char_vars_format_woe, /*Input table that contains the numeric variables that should be converted to character*/
+target_variable = &target_variable_name., /*The name of the dependent variable (it should be binary)*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+character_format = 13.10, /*Format inside the PUT statement*/
+/**************************************************************************/
+/*Output*/
+output_dset = output.Char_vars_format_woe_char /*Name of table that the numeric variables are converted to character*/
+);
+
+%identify_character_variables(
+/*********************************************************************************/
+/*Input*/
+input_table = output.Char_vars_format_woe_char, /*Name of table that has the character variables*/
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
+If there are no weights in the dataset then create a field with values 1 in every row*/
+/*********************************************************************************/
+/*Output*/
+character_variables = char_vars_for_bin, /*Name of the macro variable that contains all the character variables that will be used for modelling*/
+character_contents = char_vars_for_bin_contents /*Name of the table that contain the contents of the character variables from &input_table. dataset*/
+);
+%put &char_vars_for_bin.;
+%put %sysfunc(countw(&char_vars_for_bin.));
+
+%character_to_binary_transreg(
+/*********************************************************************************/
+/*Input*/
+input_table = output.Char_vars_format_woe_char, /*Table that has the character variables that will be convert to binary*/
+character_variables_list = &char_vars_for_bin., /*List of character variables separated by space*/
+target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
+If there are no weights in the dataset then create a field with values 1 in every row*/
+keep_all_levels = 0, /*Set to 1 to keep all the levels from the character variables and 0 to keep all the levels 
+apart from one level which will be the reference level*/
+/*********************************************************************************/
+/*Output*/
+output_design_table = output.clpsed_char_to_binary, /*Table that has the binary variable only*/
+output_contents_table = output.clpsed_char_to_binary_contents /*Table that has the labels of the binary variables, so that it will be possible to 
+reference them later.*/
+);
+/**************************************************************************/
+
 /**************************************************************************/
 /**************************************************************************/
 
