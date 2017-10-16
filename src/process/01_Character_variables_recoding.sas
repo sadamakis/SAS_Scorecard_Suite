@@ -10,11 +10,11 @@ material. In addition, Sotirios Adamakis will provide no support for the materia
 */
 /*------------------------------------------------------------------------------------------------------*/
 /* Author:                   ---  Sotirios Adamakis                                                     */
-/* Program Name:             ---  01_Character_variables_recoding.sas                                    */
+/* Program Name:             ---  01_Character_variables_recoding.sas                                   */
 /* Description:              ---  Use this code to convert character variables to Weight of Evidence 
 variables  																					            */
 /*                                                                                                      */
-/* Date Originally Created:  ---                                                                        */
+/* Date Originally Created:  ---  October 2017                                                          */
 /* Date Updated:             ---                                                                        */
 /* Code Version:             ---  v1.0                                                                  */
 /*------------------------------------------------------------------------------------------------------*/

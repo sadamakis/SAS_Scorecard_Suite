@@ -10,11 +10,11 @@ material. In addition, Sotirios Adamakis will provide no support for the materia
 */
 /*------------------------------------------------------------------------------------------------------*/
 /* Author:                   ---  Sotirios Adamakis                                                     */
-/* Program Name:             ---  03b_Convert_numeric_to_character.sas                                   */
+/* Program Name:             ---  03b_Convert_numeric_to_character.sas                                  */
 /* Description:              ---  Converts numeric variables to character variables and creates
 	Weight of Evidence variables                                                                        */
 /*                                                                                                      */
-/* Date Originally Created:  ---                                                                        */
+/* Date Originally Created:  ---  October 2017                                                          */
 /* Date Updated:             ---                                                                        */
 /* Code Version:             ---  v1.0                                                                  */
 /*------------------------------------------------------------------------------------------------------*/

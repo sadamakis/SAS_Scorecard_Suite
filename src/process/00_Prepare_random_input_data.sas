@@ -10,7 +10,7 @@ material. In addition, Sotirios Adamakis will provide no support for the materia
 */
 /*------------------------------------------------------------------------------------------------------*/
 /* Author:                   ---  Sotirios Adamakis                                                     */
-/* Program Name:             ---  00_Prepare_input_data.sas                                              */
+/* Program Name:             ---  00_Prepare_input_data.sas                                             */
 /* Description:              ---  User-amendable code that should create a table that has exactly the 
 following variables: 
  - target variable
@@ -18,7 +18,7 @@ following variables:
  - ID (key) variable - unique identifier for every row in the dataset
  - predictors (both numerical and categorical)                                                          */
 /*                                                                                                      */
-/* Date Originally Created:  ---                                                                        */
+/* Date Originally Created:  ---  October 2017                                                          */
 /* Date Updated:             ---                                                                        */
 /* Code Version:             ---  v1.0                                                                  */
 /*------------------------------------------------------------------------------------------------------*/

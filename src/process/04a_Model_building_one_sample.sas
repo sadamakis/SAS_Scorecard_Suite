@@ -10,10 +10,10 @@ material. In addition, Sotirios Adamakis will provide no support for the materia
 */
 /*------------------------------------------------------------------------------------------------------*/
 /* Author:                   ---  Sotirios Adamakis                                                     */
-/* Program Name:             ---  04a_Model_building_one_sample.sas                                      */
+/* Program Name:             ---  04a_Model_building_one_sample.sas                                     */
 /* Description:              ---  Build models using the one sample approach, as opposed to bootstrapping                                                                                           */
 /*                                                                                                      */
-/* Date Originally Created:  ---                                                                        */
+/* Date Originally Created:  ---  October 2017                                                          */
 /* Date Updated:             ---                                                                        */
 /* Code Version:             ---  v1.0                                                                  */
 /*------------------------------------------------------------------------------------------------------*/

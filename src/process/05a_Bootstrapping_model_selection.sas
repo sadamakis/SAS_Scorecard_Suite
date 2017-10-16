@@ -10,10 +10,10 @@ material. In addition, Sotirios Adamakis will provide no support for the materia
 */
 /*------------------------------------------------------------------------------------------------------*/
 /* Author:                   ---  Sotirios Adamakis                                                     */
-/* Program Name:             ---  05a_Bootstrapping_model_selection.sas                                  */
+/* Program Name:             ---  05a_Bootstrapping_model_selection.sas                                 */
 /* Description:              ---  Build models using bootstrap sampling.  								*/
 /*                                                                                                      */
-/* Date Originally Created:  ---                                                                        */
+/* Date Originally Created:  ---  October 2017                                                          */
 /* Date Updated:             ---                                                                        */
 /* Code Version:             ---  v1.0                                                                  */
 /*------------------------------------------------------------------------------------------------------*/

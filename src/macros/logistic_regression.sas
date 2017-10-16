@@ -1,6 +1,24 @@
-/***********************************************************************************/
-/*Macro that takes as an input development and validation sample and builds a logistic regression model 
-on the development sample*/
+/* Disclaimer
+Coyright (C), Sotirios Adamakis
+This software may be used, copied, or redistributed only with the permission of Sotirios Adamakis. 
+If used, copied, or redistributed it should not be sold and this copyright notice should be reproduced 
+on each copy made. All code in this document is provided "as is" by Sotirios Adamakis without warranty 
+of any kind, either express or implied, including but not limited to the implied warranties of 
+merchantability and fitness for a particular purpose. Recipients acknowledge and agree that 
+Sotirios Adamakis shall not be liable for any damages whatsoever arising out of their use of this 
+material. In addition, Sotirios Adamakis will provide no support for the materials contained herein.
+*/
+/*------------------------------------------------------------------------------------------------------*/
+/* Author:                   ---  Sotirios Adamakis                                                     */
+/* Program Name:             ---  logistic_regression.sas												*/ 
+/* Description:              ---  Macro that takes as input development and validation samples and 
+builds a logistic regression model on the development sample											*/
+/*                                                                                                      */
+/* Date Originally Created:  ---  October 2017                                                          */
+/* Date Updated:             ---                                                                        */
+/* Code Version:             ---  v1.0                                                                  */
+/*------------------------------------------------------------------------------------------------------*/
+/***************************************************************************************************/
 %macro logistic_regression(
 /***********************************************************************************/
 /*Input*/

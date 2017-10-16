@@ -1,6 +1,25 @@
-/*****************************************************************************************/
-/*Macro to recode the original numeric variables dataset based on the variable reduction method*/
-%macro recode_numeric_vars (
+/* Disclaimer
+Coyright (C), Sotirios Adamakis
+This software may be used, copied, or redistributed only with the permission of Sotirios Adamakis. 
+If used, copied, or redistributed it should not be sold and this copyright notice should be reproduced 
+on each copy made. All code in this document is provided "as is" by Sotirios Adamakis without warranty 
+of any kind, either express or implied, including but not limited to the implied warranties of 
+merchantability and fitness for a particular purpose. Recipients acknowledge and agree that 
+Sotirios Adamakis shall not be liable for any damages whatsoever arising out of their use of this 
+material. In addition, Sotirios Adamakis will provide no support for the materials contained herein.
+*/
+/*------------------------------------------------------------------------------------------------------*/
+/* Author:                   ---  Sotirios Adamakis                                                     */
+/* Program Name:             ---  recode_numeric_vars.sas												*/ 
+/* Description:              ---  Macro that recodes the original numeric variables dataset based on 
+the variable reduction method																			*/
+/*                                                                                                      */
+/* Date Originally Created:  ---  October 2017                                                          */
+/* Date Updated:             ---                                                                        */
+/* Code Version:             ---  v1.0                                                                  */
+/*------------------------------------------------------------------------------------------------------*/
+/***************************************************************************************************/
+%macro recode_numeric_vars(
 /*********************************************************************************/
 /*Input*/
 input_dset, /*The name of the dataset that contain all the numeric variables*/

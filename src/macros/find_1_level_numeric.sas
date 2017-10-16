@@ -1,5 +1,24 @@
-/*********************************************************************************/
-/*Check whether there are predictors with only 1 level. If so, then drop these fields*/
+/* Disclaimer
+Coyright (C), Sotirios Adamakis
+This software may be used, copied, or redistributed only with the permission of Sotirios Adamakis. 
+If used, copied, or redistributed it should not be sold and this copyright notice should be reproduced 
+on each copy made. All code in this document is provided "as is" by Sotirios Adamakis without warranty 
+of any kind, either express or implied, including but not limited to the implied warranties of 
+merchantability and fitness for a particular purpose. Recipients acknowledge and agree that 
+Sotirios Adamakis shall not be liable for any damages whatsoever arising out of their use of this 
+material. In addition, Sotirios Adamakis will provide no support for the materials contained herein.
+*/
+/*------------------------------------------------------------------------------------------------------*/
+/* Author:                   ---  Sotirios Adamakis                                                     */
+/* Program Name:             ---  find_1_level_numeric.sas												*/
+/* Description:              ---  Check whether there are predictors with only 1 level. If so, then 
+drop these fields. The code is relevant to numeric variables. 											*/
+/*                                                                                                      */
+/* Date Originally Created:  ---  October 2017                                                          */
+/* Date Updated:             ---                                                                        */
+/* Code Version:             ---  v1.0                                                                  */
+/*------------------------------------------------------------------------------------------------------*/
+/***************************************************************************************************/
 %macro find_1_level_numeric(
 /*********************************************************************************/
 /*Input*/

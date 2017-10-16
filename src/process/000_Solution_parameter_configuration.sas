@@ -1,3 +1,29 @@
+/* Disclaimer
+Coyright (C), Sotirios Adamakis
+This software may be used, copied, or redistributed only with the permission of Sotirios Adamakis. 
+If used, copied, or redistributed it should not be sold and this copyright notice should be reproduced 
+on each copy made. All code in this document is provided "as is" by Sotirios Adamakis without warranty 
+of any kind, either express or implied, including but not limited to the implied warranties of 
+merchantability and fitness for a particular purpose. Recipients acknowledge and agree that 
+Sotirios Adamakis shall not be liable for any damages whatsoever arising out of their use of this 
+material. In addition, Sotirios Adamakis will provide no support for the materials contained herein.
+*/
+/*------------------------------------------------------------------------------------------------------*/
+/* Author:                   ---  Sotirios Adamakis                                                     */
+/* Program Name:             ---  000_Solution_parameter_configuration.sas                              */
+/* Description:              ---  Sets the following parameters that will be used by the solution:
+ - macros folder path
+ - folder path that stores the log files of the solution
+ - folder path that uses input tables and outputs tables
+ - table name that has predictors and target variable
+ - target variable name
+ - weight variable name
+ - ID (key) variable name - unique identifier for every row in the dataset                              */
+/*                                                                                                      */
+/* Date Originally Created:  ---  October 2017                                                          */
+/* Date Updated:             ---                                                                        */
+/* Code Version:             ---  v1.0                                                                  */
+/*------------------------------------------------------------------------------------------------------*/
 /*********************************************************************************/
 /***********   Start parameters configuration    ***************/
 /*********************************************************************************/

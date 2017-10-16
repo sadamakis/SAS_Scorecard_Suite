@@ -10,7 +10,7 @@ material. In addition, Sotirios Adamakis will provide no support for the materia
 */
 /*------------------------------------------------------------------------------------------------------*/
 /* Author:                   ---  Sotirios Adamakis                                                     */
-/* Program Name:             ---  03a_Variable_reduction_and_recoding.sas                                */
+/* Program Name:             ---  03a_Variable_reduction_and_recoding.sas                               */
 /* Description:              ---  Fix issues with predictors that are highly correlated. The output from
 this step is a dataset that treats highly correlated in the following ways: 
 - Select only one variable, the one that has the best two sample t-test with the target variable
@@ -25,7 +25,7 @@ weight. The higher the correlation of a predictor with the target variable the h
 Sum of the importance weights of the variables that are correlated equals to the number of the correlated
 variables. 																								*/
 /*                                                                                                      */
-/* Date Originally Created:  ---                                                                        */
+/* Date Originally Created:  ---  October 2017                                                          */
 /* Date Updated:             ---                                                                        */
 /* Code Version:             ---  v1.0                                                                  */
 /*------------------------------------------------------------------------------------------------------*/

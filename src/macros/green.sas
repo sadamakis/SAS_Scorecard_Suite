@@ -1,13 +1,28 @@
-/**********************************************************************************************/
-/*Group levels based on: Comparison of Data Preparation Methods for Use in Model
-Development with SAS Enterprise Miner
-http://www2.sas.com/proceedings/sugi31/079-31.pdf
+/* Disclaimer
+Coyright (C), Sotirios Adamakis
+This software may be used, copied, or redistributed only with the permission of Sotirios Adamakis. 
+If used, copied, or redistributed it should not be sold and this copyright notice should be reproduced 
+on each copy made. All code in this document is provided "as is" by Sotirios Adamakis without warranty 
+of any kind, either express or implied, including but not limited to the implied warranties of 
+merchantability and fitness for a particular purpose. Recipients acknowledge and agree that 
+Sotirios Adamakis shall not be liable for any damages whatsoever arising out of their use of this 
+material. In addition, Sotirios Adamakis will provide no support for the materials contained herein.
+*/
+/*------------------------------------------------------------------------------------------------------*/
+/* Author:                   ---  Sotirios Adamakis                                                     */
+/* Program Name:             ---  green.sas																*/
+/* Description:              ---  Group levels based on: Comparison of Data Preparation Methods for Use 
+in Model Development with SAS Enterprise Miner (http://www2.sas.com/proceedings/sugi31/079-31.pdf)
 This method of collapsing nominal predictors (using any-pairs collapsing) is based on clustering of levels 
 using SAS PROC CLUSTER. This method selects the pair for collapsing which maximizes the Pearson chi-square. 
 A stopping criterion is defined by selecting the iteration which produces the minimum chi-square statistic 
-probability (right tail probability) of association between the target and the collapsed predictor. 
-*/
-
+probability (right tail probability) of association between the target and the collapsed predictor. 	*/
+/*                                                                                                      */
+/* Date Originally Created:  ---  October 2017                                                          */
+/* Date Updated:             ---                                                                        */
+/* Code Version:             ---  v1.0                                                                  */
+/*------------------------------------------------------------------------------------------------------*/
+/***************************************************************************************************/
 %macro green(
 /**************************************************************************/
 /*Input*/
