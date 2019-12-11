@@ -1,1 +1,5 @@
 1) Add solution limitations
+2) Add sensitivity analysis macros
+3) Add PSI macros
+4) Add config.csv to configure the solution
+5) Add Gini calculation macros
