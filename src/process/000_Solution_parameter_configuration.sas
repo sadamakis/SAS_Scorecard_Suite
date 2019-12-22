@@ -28,11 +28,11 @@ material. In addition, Sotirios Adamakis will provide no support, updates or pat
 /***********   Start parameters configuration    ***************/
 /*********************************************************************************/
 /*Set path that contains the macros*/
-%let macros_path = X:\Decision_Science\11_Team\03_Users\Sotiris\Solutions\Scorecard_suite\Scorecard_suite\src\macros;
+%let macros_path = C:\Data_Science\Scorecard_Suite\src\macros;
 /*Set path that will have the output and log files that are produced from this code*/
-%let log_path = X:\Decision_Science\11_Team\03_Users\Sotiris\Solutions\Scorecard_suite\Scorecard_suite\logs;
+%let log_path = C:\Data_Science\Scorecard_Suite\logs;
 /*Set the path that contains the tables relevant to this code*/
-%let data_path = X:\Decision_Science\11_Team\03_Users\Sotiris\Solutions\Scorecard_suite\Scorecard_suite\data;
+%let data_path = C:\Data_Science\Scorecard_Suite\data;
 /*Set the name of the table that contains the following variables: 
 1) target variable
 2) id variable
