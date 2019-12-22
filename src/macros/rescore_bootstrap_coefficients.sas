@@ -33,7 +33,7 @@ bootstrap_score_dataset, /*Dataset that contains the target variable, the weight
 GINI_outdset /*Dataset that contains the Gini coefficient*/
 );
 
-proc contents data=&predictors_coefficients_outtable.  (drop= Intercept _LNLIKE_ _LINK_ _NAME_ _STATUS_ _TYPE_) out=predictors_coefficients_c (keep= NAME) noprint;
+proc contents data=&predictors_coefficients_outtable.  (drop= Intercept _LNLIKE_ _LINK_ _NAME_ _STATUS_ _TYPE_ _ESTTYPE_) out=predictors_coefficients_c (keep= NAME) noprint;
 run;
 proc sql noprint;
 select name into :variables_in_bootstrap_model separated by ' '
