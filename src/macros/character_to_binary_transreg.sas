@@ -49,7 +49,7 @@ proc transreg data=input design CPREFIX=5;
 %if &keep_all_levels. = 1 %then %do;
 	model class(&character_variables_list. / SEPARATORS='|' 'x' zero=none);
 %end;
-	id bad_flag transact_id weight;
+	id &target_variable. &id_variable. &weight_variable.;
 	output out=&output_design_table. (drop= _type_ _name_ Intercept &character_variables_list.);
 run;
 
