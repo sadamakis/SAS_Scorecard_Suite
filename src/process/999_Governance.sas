@@ -49,7 +49,7 @@ progPath = programPath /*Macro variable that contains the path where the SAS fil
 %include "&programPath.\01_Character_variables_recoding.sas";
 %include "&programPath.\02_Numeric_variables_recoding.sas";
 %include "&programPath.\03a_Variable_reduction_and_recoding.sas";
-/*%include "&programPath.\03b_Convert_numeric_to_character.sas";*/
+%include "&programPath.\03b_Convert_numeric_to_character.sas";
 %include "&programPath.\04a_Model_building_one_sample.sas";
 %include "&programPath.\05a_Bootstrapping_model_selection.sas";
 

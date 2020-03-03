@@ -40,6 +40,13 @@ min: for minimum
 max: for maximum
 mean: for average
 */
+variable_suffix, /*Suffix of the variable name that will be created. Leave blank if argument_transform=dominant. Otherwise, some suggestions could be:
+nt_min, nt_max, nt_mean: for 'no transform' argument_transform, ('min', 'max', 'mean') argument_function
+std_min, std_max, std_mean: for 'standardised' argument_transform, ('min', 'max', 'mean') argument_function
+iw_min, iw_max, iw_mean: for 'importance_weight' argument_transform, ('min', 'max', 'mean') argument_function
+iwstd_min, iwstd_max, iwstd_mean: for 'importance_weight_standardised' argument_transform, ('min', 'max', 'mean') argument_function
+blank: for 'dominant' argument_transform
+*/
 /*********************************************************************************/
 /*Output*/
 coded_vars_dset, /*Dataset that contains what function and transformation was applied to each cluster*/
@@ -211,14 +218,14 @@ data &output_dset.;
 		%let cluster_i = %scan(&cluster, &i, '|');
 		%let argument_i = %scan(&argument, &i, '|');
 		%put Iteration &i., cluster &cluster_i., argument &argument_i.;
-		&cluster_i. = &argument_function.&argument_i.;
-		keep &cluster_i.;
+		&cluster_i._&variable_suffix. = &argument_function.&argument_i.;
+		keep &cluster_i._&variable_suffix.;
 	%end;
 %if &argument_function.=min %then %do;
-	if &cluster_i.=1E7 then &cluster_i.=.;
+	if &cluster_i._&variable_suffix.=1E7 then &cluster_i._&variable_suffix.=.;
 %end;
 %else %if &argument_function.=max %then %do;
-	if &cluster_i.=-1E7 then &cluster_i.=.;
+	if &cluster_i._&variable_suffix.=-1E7 then &cluster_i._&variable_suffix.=.;
 %end;
 	keep &weight_variable. &target_variable. &id_variable.;
 run;

@@ -79,7 +79,7 @@ create table output.Modelling_data as
 select 
 	t1.*
 	, t2.development_flag 
-from output.numeric_vars_min_d as t1
+from output.char_convert_vars_woe_char as t1
 left join &table_name._dev_val_split as t2
 on t1.&ID_variable_name. = t2.&ID_variable_name.
 ;

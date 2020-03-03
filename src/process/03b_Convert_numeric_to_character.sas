@@ -78,7 +78,7 @@ quit;
 %convert_numeric_to_character(
 /**************************************************************************/
 /*Input*/
-input_dset = output.Numeric_vars_min_d, /*Input table that contains the numeric variables that should be converted to character*/
+input_dset = output.numeric_vars_min_all, /*Input table that contains the numeric variables that should be converted to character*/
 target_variable = &target_variable_name., /*The name of the dependent variable (it should be binary)*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
 id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
@@ -185,6 +185,20 @@ inf_val_outds = output.clpse_cnvrt_information_value, /*Dataset with all the inf
 woe_format_outds = output.clpse_cnvrt_woe_format_dataset, /*Dataset with the Weight of Evidence variables*/
 output_formatted_data = output.clpse_cnvrt_rcd_format_woe /*Original dataset, but with WOE variables instead of the original variables*/
 );
+
+%convert_numeric_to_character(
+/**************************************************************************/
+/*Input*/
+input_dset = output.char_convert_vars_format_woe, /*Input table that contains the numeric variables that should be converted to character*/
+target_variable = &target_variable_name., /*The name of the dependent variable (it should be binary)*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+character_format = 13.10, /*Format inside the PUT statement*/
+/**************************************************************************/
+/*Output*/
+output_dset = output.char_convert_vars_woe_char /*Name of table that the numeric variables are converted to character*/
+);
+
 /**************************************************************************/
 /**************************************************************************/
 
