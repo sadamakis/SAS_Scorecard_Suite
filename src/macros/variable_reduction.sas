@@ -93,11 +93,13 @@ variable that is more correlated with the dependent variable*/
 ods output "Statistics" = Statistics
  "T-Tests" = ttests
  "Equality of Variances" = equality_of_variances;
+ods graphics off;
 proc ttest data=&input_dset. (keep= &numeric_vars. &target_variable. &weight_variable.);
 	class &target_variable.;
 	var &numeric_vars.;
 	weight &weight_variable.;
 run;
+ods graphics on;
 ods output close; 
 data Ttests_equal_variance Ttests_unequal_variance;
 	set Ttests;

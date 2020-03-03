@@ -523,7 +523,7 @@ DATA
    SET mean_out end = eof;
 
 /* For woe_code */
-   length word word_p string $1000;
+   length word word_p $1000 string $5000;
    length all_code $3100 code1 code3 $1000;
 
 /* END: For woe_code */

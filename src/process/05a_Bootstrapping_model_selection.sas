@@ -107,7 +107,6 @@ numeric_variables = num_variables, /*Name of the macro variable that contains al
 numeric_contents = num_variables_contents /*Name of the table that contain the contents of the numeric variables from &input_table. dataset*/
 );
 %put &num_variables.;
-%put %sysfunc(countw(&num_variables.));
 
 %identify_character_variables(
 /*********************************************************************************/
@@ -124,11 +123,10 @@ character_contents = char_variables_contents /*Name of the table that contain th
 );
 %put &char_variables.;
 
-%let target_variable = &target_variable_name.;
 proc sql noprint;
 select count(*) into: nlobs
 from output.Modelling_data_bt_development
-where &target_variable. = 0
+where &target_variable_name. = 0
 ;
 quit;
 %put &nlobs.;
@@ -203,8 +201,8 @@ target_variable = &target_variable_name.,  /*Name of target variable - leave bla
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row. This should not be weight, 
 as this name is reserved in the macro*/
-varlist_cont = &predictors_in_the_model., /*List of continuous variables that will go in the model*/
-varlist_disc = , /*List of categorical variables that will go in the model*/
+varlist_cont = &num_predictors_in_the_model., /*List of continuous variables that will go in the model*/
+varlist_disc = &char_predictors_in_the_model., /*List of categorical variables that will go in the model*/
 nboots = 5, /*Number of bootstrap samples*/
 sampling_method = urs, /*srs or urs: sampling method for bootstrapping. srs for simple random selection 
 (no replacement), urs for random selection with replacement*/
