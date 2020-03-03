@@ -64,6 +64,7 @@ options compress=yes;
 libname output "&data_path.\output";
 
 %include "&macros_path.\merge_two_tables.sas";
+%include "&macros_path.\merge_tables.sas";
 %include "&macros_path.\identify_numeric_variables.sas";
 %include "&macros_path.\variable_reduction.sas";
 %include "&macros_path.\recode_numeric_vars.sas";
