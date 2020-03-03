@@ -225,6 +225,38 @@ predictors_coefficients_outtable = output.predictors_coeffcnts_smmry /*Table tha
 LIMITATION: The table name should be up to 30 characters.*/
 );
 
+/*Otherwise we can do the same analysis without bootstrapping*/
+%bootstrap_coefficients_estimate(
+/*********************************************************************************/
+/*Input*/
+modelling_data_development = output.Modelling_data_bt_development, /*Development data that will be used to create a logistic regression model*/
+modelling_data_validation = output.Modelling_data_bt_validation, /*Validation data that will be used to validate the logistic regression model*/
+target_variable = &target_variable_name.,  /*Name of target variable - leave blank if missing*/
+weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
+If there are no weights in the dataset then create a field with values 1 in every row. This should not be weight, 
+as this name is reserved in the macro*/
+varlist_cont = &num_predictors_in_the_model., /*List of continuous variables that will go in the model*/
+varlist_disc = &char_predictors_in_the_model., /*List of categorical variables that will go in the model*/
+nboots = 1, /*Number of bootstrap samples*/
+sampling_method = srs, /*srs or urs: sampling method for bootstrapping. srs for simple random selection 
+(no replacement), urs for random selection with replacement*/
+bootsize = &nlobs., /*Bootstrap sample for 'goods'. In credit risk and fraud the 'bad flag' is undersampled. The bootstrap 
+sample selects all the bads and &bootsize. number of goods. This is to decrease the running time of the algorithm, 
+which can be very long - typically each bootstrap sample with ~300 variables takes about ~30 mins*/
+/*********************************************************************************/
+/*Output*/
+predictors_coefficients_outtable = output.predictors_cffcnts_smmry_one, /*Table that stores the predictor coefficients for each bootstrap sample.
+LIMITATION: The table name should be up to 30 characters.*/
+metrics_outtable_development = output.metrics_outtable_development_one, /*Table that stores model metrics for the development sample, e.g. the Gini coefficients, log-losses, KS statistics*/
+metrics_outtable_validation =  output.metrics_outtable_validation_one /*Table that stores model metrics for the validation sample, e.g. the Gini coefficients, log-losses, KS statistics*/
+);
+
+/*******************************************************************************************************************/
+/*******************************************************************************************************************/
+/*The code below currently works only if all the model variables are numeric*/
+/*******************************************************************************************************************/
+/*******************************************************************************************************************/
+
 /*Compare the folloowing two models:
 	- Coefficients averaged over the bootstrap samples
 	- Coefficients obtained when running logistic regression with the same predictors, but without bootstrapping*/
@@ -302,34 +334,9 @@ output_score_dataset = output.bootstrap_score_val /*Output dataset that has the 
 scorecard value. The name of the new field is "scorecard".*/
 );
 
-%bootstrap_coefficients_estimate(
-/*********************************************************************************/
-/*Input*/
-modelling_data_development = output.Modelling_data_bt_development, /*Development data that will be used to create a logistic regression model*/
-modelling_data_validation = output.Modelling_data_bt_validation, /*Validation data that will be used to validate the logistic regression model*/
-target_variable = &target_variable_name.,  /*Name of target variable - leave blank if missing*/
-weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
-If there are no weights in the dataset then create a field with values 1 in every row. This should not be weight, 
-as this name is reserved in the macro*/
-varlist_cont = &predictors_in_the_model., /*List of continuous variables that will go in the model*/
-varlist_disc = , /*List of categorical variables that will go in the model*/
-nboots = 1, /*Number of bootstrap samples*/
-sampling_method = srs, /*srs or urs: sampling method for bootstrapping. srs for simple random selection 
-(no replacement), urs for random selection with replacement*/
-bootsize = &nlobs., /*Bootstrap sample for 'goods'. In credit risk and fraud the 'bad flag' is undersampled. The bootstrap 
-sample selects all the bads and &bootsize. number of goods. This is to decrease the running time of the algorithm, 
-which can be very long - typically each bootstrap sample with ~300 variables takes about ~30 mins*/
-/*********************************************************************************/
-/*Output*/
-predictors_coefficients_outtable = output.predictors_cffcnts_smmry_one, /*Table that stores the predictor coefficients for each bootstrap sample.
-LIMITATION: The table name should be up to 30 characters.*/
-gini_outtable_development = output.gini_outtable_development_one, /*Table that stores the Gini coefficients for the development sample*/
-gini_outtable_validation = output.gini_outtable_validation_one, /*Table that stores the Gini coefficients for the development sample*/
-KS_outtable_development = output.KS_outtable_development_one, /*Table that stores the KS statistics for the development sample*/
-KS_outtable_validation = output.KS_outtable_validation_one /*Table that stores the KS statistics for the validation sample*/
-);
-/*********************************************************************************/
-/*********************************************************************************/
+/*******************************************************************************************************************/
+/*******************************************************************************************************************/
+/*******************************************************************************************************************/
 
 proc printto;
 run;
