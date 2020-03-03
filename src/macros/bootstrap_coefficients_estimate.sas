@@ -40,10 +40,8 @@ which can be very long - typically each bootstrap sample with ~300 variables tak
 /*Output*/
 predictors_coefficients_outtable, /*Table that stores the predictor coefficients for each bootstrap sample.
 LIMITATION: The table name should be up to 30 characters.*/
-gini_outtable_development, /*Table that stores the Gini coefficients for the development sample*/
-gini_outtable_validation, /*Table that stores the Gini coefficients for the development sample*/
-KS_outtable_development, /*Table that stores the KS statistics for the development sample*/
-KS_outtable_validation /*Table that stores the KS statistics for the validation sample*/
+metrics_outtable_development, /*Table that stores model metrics for the development sample, e.g. the Gini coefficients, log-losses, KS statistics*/
+metrics_outtable_validation /*Table that stores model metrics for the validation sample, e.g. the Gini coefficients, log-losses, KS statistics*/
 );
 
       %do i=1 %to &nboots.;
@@ -138,20 +136,38 @@ score_variable = IP_0, /*Score variable should be, e.g., scorecard output or pre
 /*Output*/
 GINI_outdset = gini_development /*Dataset that contains the Gini coefficient*/
 );
+%logloss(
+/**************************************************************************/
+/*Input*/
+input_dataset_prob = development_output, /*Name of dataset that should have the score or predicted probability, e.g. output table from PROC LOGISTIC*/
+target_variable = &target_variable.,  /*Name of target variable - leave blank if missing*/
+weight_variable = weight_final, /*Name of weight variable in the input dataset. This should exist in the dataset
+If there are no weights in the dataset then create a field with values 1 in every row*/
+predicted_probability = IP_1, /*Predicted probability from the model output*/
+eps = 1e-15, /*Correcting factor*/
+/**************************************************************************/
+/*Output*/
+logloss_outdset = logloss_development /*Dataset that contains the Gini coefficient*/
+);
+data gini_development;
+    set gini_development;
+    if _n_=1 then set logloss_development(keep=log_loss);
+run;
+
 %if &i.=1 %then %do;
-data &gini_outtable_development.;
+data gini_outtable_development;
 retain iteration_num;
-	set gini_development (keep= gini);
+	set gini_development (keep= gini log_loss);
 	iteration_num = &i.;
 run;
 %end;
 %else %do;
 data gini_development_temp;
 retain iteration_num;
-	set gini_development (keep= gini);
+	set gini_development (keep= gini log_loss);
 	iteration_num = &i.;
 run;
-proc append base=&gini_outtable_development. data=gini_development_temp force;
+proc append base=gini_outtable_development data=gini_development_temp force;
 run;
 %end;
 
@@ -168,20 +184,38 @@ score_variable = P_0, /*Score variable should be, e.g., scorecard output or pred
 /*Output*/
 GINI_outdset = gini_validation /*Dataset that contains the Gini coefficient*/
 );
+%logloss(
+/**************************************************************************/
+/*Input*/
+input_dataset_prob = validation_output, /*Name of dataset that should have the score or predicted probability, e.g. output table from PROC LOGISTIC*/
+target_variable = &target_variable.,  /*Name of target variable - leave blank if missing*/
+weight_variable = &weight_variable., /*Name of weight variable in the input dataset. This should exist in the dataset
+If there are no weights in the dataset then create a field with values 1 in every row*/
+predicted_probability = P_1, /*Predicted probability from the model output*/
+eps = 1e-15, /*Correcting factor*/
+/**************************************************************************/
+/*Output*/
+logloss_outdset = logloss_validation /*Dataset that contains the Gini coefficient*/
+);
+data gini_validation;
+    set gini_validation;
+    if _n_=1 then set logloss_validation(keep=log_loss);
+run;
+
 %if &i.=1 %then %do;
-data &gini_outtable_validation.;
+data gini_outtable_validation;
 retain iteration_num;
-	set gini_validation (keep= gini);
+	set gini_validation (keep= gini log_loss);
 	iteration_num = &i.;
 run;
 %end;
 %else %do;
 data gini_validation_temp;
 retain iteration_num;
-	set gini_validation (keep= gini);
+	set gini_validation (keep= gini log_loss);
 	iteration_num = &i.;
 run;
-proc append base=&gini_outtable_validation. data=gini_validation_temp force;
+proc append base=gini_outtable_validation data=gini_validation_temp force;
 run;
 %end;
 /***************************************************************************************************/
@@ -195,7 +229,7 @@ Proc npar1way data=development_output edf noprint;
 	output out=KS_development (keep= _D_);
 run;
 %if &i.=1 %then %do;
-data &KS_outtable_development.;
+data KS_outtable_development;
 retain iteration_num;
 	set KS_development (rename=(_D_=KS_statistic));
 	iteration_num = &i.;
@@ -207,7 +241,7 @@ retain iteration_num;
 	set KS_development (rename=(_D_=KS_statistic));
 	iteration_num = &i.;
 run;
-proc append base=&KS_outtable_development. data=KS_development_temp force;
+proc append base=KS_outtable_development data=KS_development_temp force;
 run;
 %end;
 
@@ -218,7 +252,7 @@ Proc npar1way data=validation_output edf noprint;
 	output out=KS_validation (keep= _D_);
 run;
 %if &i.=1 %then %do;
-data &KS_outtable_validation.;
+data KS_outtable_validation;
 retain iteration_num;
 	set KS_validation (rename=(_D_=KS_statistic));
 	iteration_num = &i.;
@@ -230,12 +264,34 @@ retain iteration_num;
 	set KS_validation (rename=(_D_=KS_statistic));
 	iteration_num = &i.;
 run;
-proc append base=&KS_outtable_validation. data=KS_validation_temp force;
+proc append base=KS_outtable_validation data=KS_validation_temp force;
 run;
 %end;
 /***************************************************************************************************/
 
       %end;
+
+proc sql;
+create table &metrics_outtable_development. as 
+select 
+    t1.*
+    , t2.*
+from gini_outtable_development as t1
+left join KS_outtable_development as t2
+on t1.iteration_num = t2.iteration_num
+;
+quit;
+proc sql;
+create table &metrics_outtable_validation. as 
+select 
+    t1.*
+    , t2.*
+from gini_outtable_validation as t1
+left join KS_outtable_validation as t2
+on t1.iteration_num = t2.iteration_num
+;
+quit;
+
 
 %mend bootstrap_coefficients_estimate;
 /***************************************************************************************************/

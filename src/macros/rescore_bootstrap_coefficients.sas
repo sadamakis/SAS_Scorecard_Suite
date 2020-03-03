@@ -30,7 +30,7 @@ If there are no weights in the dataset then create a field with values 1 in ever
 /*********************************************************************************/
 /*Output*/
 bootstrap_score_dataset, /*Dataset that contains the target variable, the weight variable and the predicted probabilities*/
-GINI_outdset /*Dataset that contains the Gini coefficient*/
+metrics_outdset /*Dataset that contains the model metrics, e.g. Gini coefficient, log-loss*/
 );
 
 proc contents data=&predictors_coefficients_outtable.  (drop= Intercept _LNLIKE_ _LINK_ _NAME_ _STATUS_ _TYPE_ _ESTTYPE_) out=predictors_coefficients_c (keep= NAME) noprint;
@@ -94,7 +94,24 @@ If there are no weights in the dataset then create a field with values 1 in ever
 score_variable = IP_0, /*Score variable should be, e.g., scorecard output or predicted probability*/
 /**************************************************************************/
 /*Output*/
-GINI_outdset = &GINI_outdset. /*Dataset that contains the Gini coefficient*/
+GINI_outdset = GINI_outdset /*Dataset that contains the Gini coefficient*/
 );
+%logloss(
+/**************************************************************************/
+/*Input*/
+input_dataset_prob = &bootstrap_score_dataset., /*Name of dataset that should have the score or predicted probability, e.g. output table from PROC LOGISTIC*/
+target_variable = &target_variable.,  /*Name of target variable - leave blank if missing*/
+weight_variable = &weight_variable., /*Name of weight variable in the input dataset. This should exist in the dataset
+If there are no weights in the dataset then create a field with values 1 in every row*/
+predicted_probability = IP_1, /*Predicted probability from the model output*/
+eps = 1e-15, /*Correcting factor*/
+/**************************************************************************/
+/*Output*/
+logloss_outdset = logloss_outdset /*Dataset that contains the Gini coefficient*/
+);
+data &metrics_outdset.;
+    set GINI_outdset;
+    if _n_=1 then set logloss_outdset(keep=log_loss);
+run;
 
 %mend rescore_bootstrap_coefficients;

@@ -45,22 +45,14 @@ predictors_outtable_BIC, /*Table that stores the variables' summary, i.e. how ma
 entered in the model, based on BIC*/
 summary_outtable_AIC, /*Table that stores the AIC summary*/
 summary_outtable_BIC, /*Table that stores the BIC summary*/
-gini_outtable_development_AIC, /*Table that stores the Gini coefficients for the development sample using
-AIC as the model selection criterion*/
-gini_outtable_validation_AIC, /*Table that stores the Gini coefficients for the validation sample using
-AIC as the model selection criterion*/
-gini_outtable_development_BIC, /*Table that stores the Gini coefficients for the development sample using
-BIC as the model selection criterion*/
-gini_outtable_validation_BIC, /*Table that stores the Gini coefficients for the validation sample using
-BIC as the model selection criterion*/
-KS_outtable_development_AIC, /*Table that stores the KS statistics for the development sample using
-AIC as the model selection criterion*/
-KS_outtable_validation_AIC, /*Table that stores the KS statistics for the validation sample using
-AIC as the model selection criterion*/
-KS_outtable_development_BIC, /*Table that stores the KS statistics for the development sample using
-BIC as the model selection criterion*/
-KS_outtable_validation_BIC /*Table that stores the KS statistics for the validation sample using
-BIC as the model selection criterion*/
+metrics_outtable_development_AIC, /*Table that stores the model metrics for the development sample using
+AIC as the model selection criterion, e.g. Gini coefficients, log-losses, KS statistics*/
+metrics_outtable_validation_AIC, /*Table that stores the model metrics for the validation sample using
+AIC as the model selection criterion, e.g. Gini coefficients, log-losses, KS statistics*/
+metrics_outtable_development_BIC, /*Table that stores the model metrics for the development sample using
+BIC as the model selection criterion, e.g. Gini coefficients, log-losses, KS statistics*/
+metrics_outtable_validation_BIC /*Table that stores the model metrics for the validation sample using
+BIC as the model selection criterion, e.g. Gini coefficients, log-losses, KS statistics*/
 );
 
 proc contents data=&modelling_data_development. out=&modelling_data_development._c noprint;
@@ -295,20 +287,38 @@ score_variable = IP_0, /*Score variable should be, e.g., scorecard output or pre
 /*Output*/
 GINI_outdset = gini_development_AIC /*Dataset that contains the Gini coefficient*/
 );
+%logloss(
+/**************************************************************************/
+/*Input*/
+input_dataset_prob = development_AIC_output, /*Name of dataset that should have the score or predicted probability, e.g. output table from PROC LOGISTIC*/
+target_variable = &target_variable.,  /*Name of target variable - leave blank if missing*/
+weight_variable = weight_final, /*Name of weight variable in the input dataset. This should exist in the dataset
+If there are no weights in the dataset then create a field with values 1 in every row*/
+predicted_probability = IP_1, /*Predicted probability from the model output*/
+eps = 1e-15, /*Correcting factor*/
+/**************************************************************************/
+/*Output*/
+logloss_outdset = logloss_development_AIC /*Dataset that contains the Gini coefficient*/
+);
+data gini_development_AIC;
+    set gini_development_AIC;
+    if _n_=1 then set logloss_development_AIC(keep=log_loss);
+run;
+
 %if &i.=1 %then %do;
-data &gini_outtable_development_AIC.;
+data gini_outtable_development_AIC;
 retain iteration_num;
-	set gini_development_AIC (keep= gini);
+	set gini_development_AIC (keep= gini log_loss);
 	iteration_num = &i.;
 run;
 %end;
 %else %do;
 data gini_development_AIC_temp;
 retain iteration_num;
-	set gini_development_AIC (keep= gini);
+	set gini_development_AIC (keep= gini log_loss);
 	iteration_num = &i.;
 run;
-proc append base=&gini_outtable_development_AIC. data=gini_development_AIC_temp force;
+proc append base=gini_outtable_development_AIC data=gini_development_AIC_temp force;
 run;
 %end;
 
@@ -325,20 +335,38 @@ score_variable = P_0, /*Score variable should be, e.g., scorecard output or pred
 /*Output*/
 GINI_outdset = gini_validation_AIC /*Dataset that contains the Gini coefficient*/
 );
+%logloss(
+/**************************************************************************/
+/*Input*/
+input_dataset_prob = validation_AIC_output, /*Name of dataset that should have the score or predicted probability, e.g. output table from PROC LOGISTIC*/
+target_variable = &target_variable.,  /*Name of target variable - leave blank if missing*/
+weight_variable = &weight_variable., /*Name of weight variable in the input dataset. This should exist in the dataset
+If there are no weights in the dataset then create a field with values 1 in every row*/
+predicted_probability = P_1, /*Predicted probability from the model output*/
+eps = 1e-15, /*Correcting factor*/
+/**************************************************************************/
+/*Output*/
+logloss_outdset = logloss_validation_AIC /*Dataset that contains the Gini coefficient*/
+);
+data gini_validation_AIC;
+    set gini_validation_AIC;
+    if _n_=1 then set logloss_validation_AIC(keep=log_loss);
+run;
+
 %if &i.=1 %then %do;
-data &gini_outtable_validation_AIC.;
+data gini_outtable_validation_AIC;
 retain iteration_num;
-	set gini_validation_AIC (keep= gini);
+	set gini_validation_AIC (keep= gini log_loss);
 	iteration_num = &i.;
 run;
 %end;
 %else %do;
 data gini_validation_AIC_temp;
 retain iteration_num;
-	set gini_validation_AIC (keep= gini);
+	set gini_validation_AIC (keep= gini log_loss);
 	iteration_num = &i.;
 run;
-proc append base=&gini_outtable_validation_AIC. data=gini_validation_AIC_temp force;
+proc append base=gini_outtable_validation_AIC data=gini_validation_AIC_temp force;
 run;
 %end;
 /***************************************************************************************************/
@@ -352,7 +380,7 @@ Proc npar1way data=development_AIC_output edf noprint;
 	output out=KS_development_AIC (keep= _D_);
 run;
 %if &i.=1 %then %do;
-data &KS_outtable_development_AIC.;
+data KS_outtable_development_AIC;
 retain iteration_num;
 	set KS_development_AIC (rename=(_D_=KS_statistic));
 	iteration_num = &i.;
@@ -364,7 +392,7 @@ retain iteration_num;
 	set KS_development_AIC (rename=(_D_=KS_statistic));
 	iteration_num = &i.;
 run;
-proc append base=&KS_outtable_development_AIC. data=KS_development_AIC_temp force;
+proc append base=KS_outtable_development_AIC data=KS_development_AIC_temp force;
 run;
 %end;
 
@@ -375,7 +403,7 @@ Proc npar1way data=validation_AIC_output edf noprint;
 	output out=KS_validation_AIC (keep= _D_);
 run;
 %if &i.=1 %then %do;
-data &KS_outtable_validation_AIC.;
+data KS_outtable_validation_AIC;
 retain iteration_num;
 	set KS_validation_AIC (rename=(_D_=KS_statistic));
 	iteration_num = &i.;
@@ -387,7 +415,7 @@ retain iteration_num;
 	set KS_validation_AIC (rename=(_D_=KS_statistic));
 	iteration_num = &i.;
 run;
-proc append base=&KS_outtable_validation_AIC. data=KS_validation_AIC_temp force;
+proc append base=KS_outtable_validation_AIC data=KS_validation_AIC_temp force;
 run;
 %end;
 /***************************************************************************************************/
@@ -528,20 +556,38 @@ score_variable = IP_0, /*Score variable should be, e.g., scorecard output or pre
 /*Output*/
 GINI_outdset = gini_development_BIC /*Dataset that contains the Gini coefficient*/
 );
+%logloss(
+/**************************************************************************/
+/*Input*/
+input_dataset_prob = development_BIC_output, /*Name of dataset that should have the score or predicted probability, e.g. output table from PROC LOGISTIC*/
+target_variable = &target_variable.,  /*Name of target variable - leave blank if missing*/
+weight_variable = weight_final, /*Name of weight variable in the input dataset. This should exist in the dataset
+If there are no weights in the dataset then create a field with values 1 in every row*/
+predicted_probability = IP_1, /*Predicted probability from the model output*/
+eps = 1e-15, /*Correcting factor*/
+/**************************************************************************/
+/*Output*/
+logloss_outdset = logloss_development_BIC /*Dataset that contains the Gini coefficient*/
+);
+data gini_development_BIC;
+    set gini_development_BIC;
+    if _n_=1 then set logloss_development_BIC(keep=log_loss);
+run;
+
 %if &i.=1 %then %do;
-data &gini_outtable_development_BIC.;
+data gini_outtable_development_BIC;
 retain iteration_num;
-	set gini_development_BIC (keep= gini);
+	set gini_development_BIC (keep= gini log_loss);
 	iteration_num = &i.;
 run;
 %end;
 %else %do;
 data gini_development_BIC_temp;
 retain iteration_num;
-	set gini_development_BIC (keep= gini);
+	set gini_development_BIC (keep= gini log_loss);
 	iteration_num = &i.;
 run;
-proc append base=&gini_outtable_development_BIC. data=gini_development_BIC_temp force;
+proc append base=gini_outtable_development_BIC data=gini_development_BIC_temp force;
 run;
 %end;
 
@@ -558,20 +604,38 @@ score_variable = P_0, /*Score variable should be, e.g., scorecard output or pred
 /*Output*/
 GINI_outdset = gini_validation_BIC /*Dataset that contains the Gini coefficient*/
 );
+%logloss(
+/**************************************************************************/
+/*Input*/
+input_dataset_prob = validation_BIC_output, /*Name of dataset that should have the score or predicted probability, e.g. output table from PROC LOGISTIC*/
+target_variable = &target_variable.,  /*Name of target variable - leave blank if missing*/
+weight_variable = &weight_variable., /*Name of weight variable in the input dataset. This should exist in the dataset
+If there are no weights in the dataset then create a field with values 1 in every row*/
+predicted_probability = P_1, /*Predicted probability from the model output*/
+eps = 1e-15, /*Correcting factor*/
+/**************************************************************************/
+/*Output*/
+logloss_outdset = logloss_validation_BIC /*Dataset that contains the Gini coefficient*/
+);
+data gini_validation_BIC;
+    set gini_validation_BIC;
+    if _n_=1 then set logloss_validation_BIC(keep=log_loss);
+run;
+
 %if &i.=1 %then %do;
-data &gini_outtable_validation_BIC.;
+data gini_outtable_validation_BIC;
 retain iteration_num;
-	set gini_validation_BIC (keep= gini);
+	set gini_validation_BIC (keep= gini log_loss);
 	iteration_num = &i.;
 run;
 %end;
 %else %do;
 data gini_validation_BIC_temp;
 retain iteration_num;
-	set gini_validation_BIC (keep= gini);
+	set gini_validation_BIC (keep= gini log_loss);
 	iteration_num = &i.;
 run;
-proc append base=&gini_outtable_validation_BIC. data=gini_validation_BIC_temp force;
+proc append base=gini_outtable_validation_BIC data=gini_validation_BIC_temp force;
 run;
 %end;
 /***************************************************************************************************/
@@ -585,7 +649,7 @@ Proc npar1way data=development_BIC_output edf noprint;
 	output out=KS_development_BIC (keep= _D_);
 run;
 %if &i.=1 %then %do;
-data &KS_outtable_development_BIC.;
+data KS_outtable_development_BIC;
 retain iteration_num;
 	set KS_development_BIC (rename=(_D_=KS_statistic));
 	iteration_num = &i.;
@@ -597,7 +661,7 @@ retain iteration_num;
 	set KS_development_BIC (rename=(_D_=KS_statistic));
 	iteration_num = &i.;
 run;
-proc append base=&KS_outtable_development_BIC. data=KS_development_BIC_temp force;
+proc append base=KS_outtable_development_BIC data=KS_development_BIC_temp force;
 run;
 %end;
 
@@ -608,7 +672,7 @@ Proc npar1way data=validation_BIC_output edf noprint;
 	output out=KS_validation_BIC (keep= _D_);
 run;
 %if &i.=1 %then %do;
-data &KS_outtable_validation_BIC.;
+data KS_outtable_validation_BIC;
 retain iteration_num;
 	set KS_validation_BIC (rename=(_D_=KS_statistic));
 	iteration_num = &i.;
@@ -620,7 +684,7 @@ retain iteration_num;
 	set KS_validation_BIC (rename=(_D_=KS_statistic));
 	iteration_num = &i.;
 run;
-proc append base=&KS_outtable_validation_BIC. data=KS_validation_BIC_temp force;
+proc append base=KS_outtable_validation_BIC data=KS_validation_BIC_temp force;
 run;
 %end;
 /***************************************************************************************************/
@@ -628,6 +692,47 @@ run;
 /***************************************************************************************************/
 
 %end;
+
+proc sql;
+create table &metrics_outtable_development_AIC. as 
+select 
+    t1.*
+    , t2.*
+from gini_outtable_development_AIC as t1
+left join KS_outtable_development_AIC as t2
+on t1.iteration_num = t2.iteration_num
+;
+quit;
+proc sql;
+create table &metrics_outtable_validation_AIC. as 
+select 
+    t1.*
+    , t2.*
+from gini_outtable_validation_AIC as t1
+left join KS_outtable_validation_AIC as t2
+on t1.iteration_num = t2.iteration_num
+;
+quit;
+proc sql;
+create table &metrics_outtable_development_BIC. as 
+select 
+    t1.*
+    , t2.*
+from gini_outtable_development_BIC as t1
+left join KS_outtable_development_BIC as t2
+on t1.iteration_num = t2.iteration_num
+;
+quit;
+proc sql;
+create table &metrics_outtable_validation_BIC. as 
+select 
+    t1.*
+    , t2.*
+from gini_outtable_validation_BIC as t1
+left join KS_outtable_validation_BIC as t2
+on t1.iteration_num = t2.iteration_num
+;
+quit;
 
 proc sql noprint;
 	drop table &predictors_outtable_AIC._t;

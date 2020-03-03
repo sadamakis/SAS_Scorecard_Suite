@@ -54,6 +54,7 @@ libname output "&data_path.\output";
 
 %include "&macros_path.\logistic_regression.sas";
 %include "&macros_path.\Gini_with_proc_freq.sas";
+%include "&macros_path.\logloss.sas";
 %include "&macros_path.\gini_for_set_predictors.sas";
 %include "&macros_path.\roc_curve_gini_actual_vs_predctd.sas" / lrecl=1000;
 %include "&macros_path.\transform_prob_to_scorecard.sas";

@@ -154,6 +154,24 @@ score_variable = IP_0, /*Score variable should be, e.g., scorecard output or pre
 /*Output*/
 GINI_outdset = &outtable_gini_development. /*Dataset that contains the Gini coefficient*/
 );
+%logloss(
+/**************************************************************************/
+/*Input*/
+input_dataset_prob = &outtable_development_score., /*Name of dataset that should have the score or predicted probability, e.g. output table from PROC LOGISTIC*/
+target_variable = &target_variable.,  /*Name of target variable - leave blank if missing*/
+weight_variable = &weight_variable., /*Name of weight variable in the input dataset. This should exist in the dataset
+If there are no weights in the dataset then create a field with values 1 in every row*/
+predicted_probability = IP_1, /*Predicted probability from the model output*/
+eps = 1e-15, /*Correcting factor*/
+/**************************************************************************/
+/*Output*/
+logloss_outdset = logloss_development /*Dataset that contains the Gini coefficient*/
+);
+data &outtable_gini_development.;
+    set &outtable_gini_development.;
+    if _n_=1 then set logloss_development(keep=log_loss);
+run;
+
 %Gini_with_proc_freq(
 /**************************************************************************/
 /*Input*/
@@ -166,6 +184,23 @@ score_variable = P_0, /*Score variable should be, e.g., scorecard output or pred
 /*Output*/
 GINI_outdset = &outtable_gini_validation. /*Dataset that contains the Gini coefficient*/
 );
+%logloss(
+/**************************************************************************/
+/*Input*/
+input_dataset_prob = &outtable_validation_score., /*Name of dataset that should have the score or predicted probability, e.g. output table from PROC LOGISTIC*/
+target_variable = &target_variable.,  /*Name of target variable - leave blank if missing*/
+weight_variable = &weight_variable., /*Name of weight variable in the input dataset. This should exist in the dataset
+If there are no weights in the dataset then create a field with values 1 in every row*/
+predicted_probability = P_1, /*Predicted probability from the model output*/
+eps = 1e-15, /*Correcting factor*/
+/**************************************************************************/
+/*Output*/
+logloss_outdset = logloss_validation /*Dataset that contains the Gini coefficient*/
+);
+data &outtable_gini_validation.;
+    set &outtable_gini_validation.;
+    if _n_=1 then set logloss_validation(keep=log_loss);
+run;
 
 %mend gini_for_set_predictors;
 /***********************************************************************************/

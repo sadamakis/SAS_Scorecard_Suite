@@ -161,33 +161,37 @@ predictors_outtable_BIC = output.predictors_outtable_BIC, /*Table that stores th
 entered in the model, based on BIC*/
 summary_outtable_AIC = output.summary_outtable_AIC, /*Table that stores the AIC summary*/
 summary_outtable_BIC = output.summary_outtable_BIC, /*Table that stores the BIC summary*/
-gini_outtable_development_AIC = output.gini_outtable_development_AIC, /*Table that stores the Gini coefficients for the development sample using
-AIC as the model selection criterion*/
-gini_outtable_validation_AIC = output.gini_outtable_validation_AIC, /*Table that stores the Gini coefficients for the validation sample using
-AIC as the model selection criterion*/
-gini_outtable_development_BIC = output.gini_outtable_development_BIC, /*Table that stores the Gini coefficients for the development sample using
-BIC as the model selection criterion*/
-gini_outtable_validation_BIC = output.gini_outtable_validation_BIC, /*Table that stores the Gini coefficients for the validation sample using
-BIC as the model selection criterion*/
-KS_outtable_development_AIC = output.KS_outtable_development_AIC, /*Table that stores the KS statistics for the development sample using
-AIC as the model selection criterion*/
-KS_outtable_validation_AIC = output.KS_outtable_validation_AIC, /*Table that stores the KS statistics for the validation sample using
-AIC as the model selection criterion*/
-KS_outtable_development_BIC = output.KS_outtable_development_BIC, /*Table that stores the KS statistics for the development sample using
-BIC as the model selection criterion*/
-KS_outtable_validation_BIC = output.KS_outtable_validation_BIC /*Table that stores the KS statistics for the validation sample using
-BIC as the model selection criterion*/
+metrics_outtable_development_AIC = output.metrics_outtable_development_AIC, /*Table that stores the model metrics for the development sample using
+AIC as the model selection criterion, e.g. Gini coefficients, log-losses, KS statistics*/
+metrics_outtable_validation_AIC = output.metrics_outtable_validation_AIC, /*Table that stores the model metrics for the validation sample using
+AIC as the model selection criterion, e.g. Gini coefficients, log-losses, KS statistics*/
+metrics_outtable_development_BIC = output.metrics_outtable_development_BIC, /*Table that stores the model metrics for the development sample using
+BIC as the model selection criterion, e.g. Gini coefficients, log-losses, KS statistics*/
+metrics_outtable_validation_BIC = output.metrics_outtable_validation_BIC /*Table that stores the model metrics for the validation sample using
+BIC as the model selection criterion, e.g. Gini coefficients, log-losses, KS statistics*/
 );
 
-/*Select numeric variables that will go in the model*/
+/*Select variables that will go in the model*/
+%let num_predictors_in_the_model=;
 proc sql noprint;
-select _name_ into: predictors_in_the_model separated by ' '
-from output.predictors_outtable_BIC
-where average_IC>=60
+select _name_ into: num_predictors_in_the_model separated by ' '
+from output.predictors_outtable_AIC as t1
+inner join num_variables_contents as t2
+on t1._name_ = t2.NAME
+where t1.average_IC>=60
 ;
 quit;
-%put &predictors_in_the_model.;
-%put %sysfunc(countw(&predictors_in_the_model.));
+%put &num_predictors_in_the_model.;
+%let char_predictors_in_the_model=;
+proc sql noprint;
+select _name_ into: char_predictors_in_the_model separated by ' '
+from output.predictors_outtable_AIC as t1
+inner join char_variables_contents as t2
+on t1._name_ = t2.NAME
+where t1.average_IC>=60
+;
+quit;
+%put &char_predictors_in_the_model.;
 
 /*Once the variables in the model have been defined, we can use bootstrapping to finalise the coefficient estimates*/
 %bootstrap_coefficients_estimate(
@@ -211,10 +215,8 @@ which can be very long - typically each bootstrap sample with ~300 variables tak
 /*Output*/
 predictors_coefficients_outtable = output.predictors_coeffcnts_smmry, /*Table that stores the predictor coefficients for each bootstrap sample.
 LIMITATION: The table name should be up to 30 characters.*/
-gini_outtable_development = output.gini_outtable_development, /*Table that stores the Gini coefficients for the development sample*/
-gini_outtable_validation = output.gini_outtable_validation, /*Table that stores the Gini coefficients for the development sample*/
-KS_outtable_development = output.KS_outtable_development, /*Table that stores the KS statistics for the development sample*/
-KS_outtable_validation = output.KS_outtable_validation /*Table that stores the KS statistics for the validation sample*/
+metrics_outtable_development = output.metrics_outtable_development, /*Table that stores model metrics for the development sample, e.g. the Gini coefficients, log-losses, KS statistics*/
+metrics_outtable_validation =  output.metrics_outtable_validation /*Table that stores model metrics for the validation sample, e.g. the Gini coefficients, log-losses, KS statistics*/
 );
 
 /*Plot bootstrap diagnostics*/
@@ -240,7 +242,7 @@ If there are no weights in the dataset then create a field with values 1 in ever
 /*********************************************************************************/
 /*Output*/
 bootstrap_score_dataset = output.bootstrap_score_dataset_dev, /*Dataset that contains the target variable, the weight variable and the predicted probabilities*/
-GINI_outdset = output.bootstrap_GINI_dev /*Dataset that contains the Gini coefficient*/
+metrics_outdset = output.bootstrap_metrics_dev /*Dataset that contains the model metrics, e.g. Gini coefficient, log-loss*/
 );
 
 %transform_prob_to_scorecard(
@@ -277,7 +279,7 @@ If there are no weights in the dataset then create a field with values 1 in ever
 /*********************************************************************************/
 /*Output*/
 bootstrap_score_dataset = output.bootstrap_score_dataset_val, /*Dataset that contains the target variable, the weight variable and the predicted probabilities*/
-GINI_outdset = output.bootstrap_GINI_val /*Dataset that contains the Gini coefficient*/
+metrics_outdset = output.bootstrap_metrics_val /*Dataset that contains the model metrics, e.g. Gini coefficient, log-loss*/
 );
 
 %transform_prob_to_scorecard(
