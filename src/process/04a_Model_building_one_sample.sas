@@ -121,12 +121,17 @@ outtable_validation_score = output.outtable_validation_score, /*Validation sampl
 outtable_model_build_summary = output.outtable_model_build_summary /*Model building summary table*/
 );
 
+data _null_;
+	set output.outtable_model_build_summary;
+	call symput('params_num', step);
+run;
+
 %gini_for_set_predictors(
 /***********************************************************************************/
 /*Input*/
 input_model_build_summary = output.outtable_model_build_summary, /*Model building summary dataset. This dataset is created when enabling 
 ModelBuildingSummary option in PROC LOGISTIC*/
-input_number_variables_in_model = 3, /*Number of variables that will be in the model.*/
+input_number_variables_in_model = &params_num., /*Number of variables that will be in the model.*/
 modelling_data_development = output.Modelling_data_development, /*Development data that will be used to create a logistic regression model*/
 modelling_data_validation = output.Modelling_data_validation, /*Validation data that will be used to validate the logistic regression model*/
 target_variable = &target_variable_name.,  /*Name of target variable - leave blank if missing*/
