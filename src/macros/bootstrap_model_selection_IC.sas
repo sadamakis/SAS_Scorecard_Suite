@@ -130,7 +130,7 @@ data boot&i.;
 	weight_final = &weight_variable. * SamplingWeight;
 run;
 proc logistic data=boot&i. namelen=200;
-      class &varlist_disc. / param=ref ;
+      class &varlist_disc. / param=ref CPREFIX=5 ;
     weight weight_final;
       model &target_variable. (event='1') = &varlist_cont. &varlist_disc. / link=logit
             expb

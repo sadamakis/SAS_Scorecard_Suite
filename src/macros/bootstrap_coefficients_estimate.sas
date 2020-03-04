@@ -95,7 +95,7 @@ data boot&i.;
 run;
 
 proc logistic data=boot&i. /*desc*/ noprint outest=predictors_coefficients namelen=200 ;
-	class &varlist_disc. / param=ref ;
+	class &varlist_disc. / param=ref CPREFIX=5;
 	weight weight_final;
 	model &target_variable. (event='1') = &varlist_cont. &varlist_disc. / link=logit
 /*Allow stepwise selection*/

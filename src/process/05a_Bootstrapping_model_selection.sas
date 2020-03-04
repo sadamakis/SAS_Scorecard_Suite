@@ -55,9 +55,11 @@ libname output "&data_path.\output";
 %include "&macros_path.\identify_numeric_variables.sas";
 %include "&macros_path.\identify_character_variables.sas";
 %include "&macros_path.\Gini_with_proc_freq.sas";
+%include "&macros_path.\logloss.sas";
 %include "&macros_path.\bootstrap_model_selection_IC.sas" / lrecl=1000;
 %include "&macros_path.\bootstrap_coefficients_estimate.sas";
 %include "&macros_path.\plot_bootstrap_diagnostics.sas";
+%include "&macros_path.\character_to_binary_transreg.sas";
 %include "&macros_path.\rescore_bootstrap_coefficients.sas";
 %include "&macros_path.\transform_prob_to_scorecard.sas";
 
@@ -251,12 +253,6 @@ metrics_outtable_development = output.metrics_outtable_development_one, /*Table 
 metrics_outtable_validation =  output.metrics_outtable_validation_one /*Table that stores model metrics for the validation sample, e.g. the Gini coefficients, log-losses, KS statistics*/
 );
 
-/*******************************************************************************************************************/
-/*******************************************************************************************************************/
-/*The code below currently works only if all the model variables are numeric*/
-/*******************************************************************************************************************/
-/*******************************************************************************************************************/
-
 /*Compare the folloowing two models:
 	- Coefficients averaged over the bootstrap samples
 	- Coefficients obtained when running logistic regression with the same predictors, but without bootstrapping*/
@@ -269,6 +265,8 @@ modelling_data_development = output.Modelling_data_bt_development, /*Development
 target_variable = &target_variable_name., /*Name of target variable*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+varlist_disc = &char_predictors_in_the_model., /*List of categorical variables that will go in the model*/
 /*********************************************************************************/
 /*Output*/
 bootstrap_score_dataset = output.bootstrap_score_dataset_dev, /*Dataset that contains the target variable, the weight variable and the predicted probabilities*/
@@ -306,6 +304,8 @@ modelling_data_development = output.Modelling_data_bt_validation, /*Development 
 target_variable = &target_variable_name., /*Name of target variable*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
+id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
+varlist_disc = &char_predictors_in_the_model., /*List of categorical variables that will go in the model*/
 /*********************************************************************************/
 /*Output*/
 bootstrap_score_dataset = output.bootstrap_score_dataset_val, /*Dataset that contains the target variable, the weight variable and the predicted probabilities*/
@@ -334,7 +334,6 @@ output_score_dataset = output.bootstrap_score_val /*Output dataset that has the 
 scorecard value. The name of the new field is "scorecard".*/
 );
 
-/*******************************************************************************************************************/
 /*******************************************************************************************************************/
 /*******************************************************************************************************************/
 
