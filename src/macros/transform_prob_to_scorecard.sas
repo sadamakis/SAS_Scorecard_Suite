@@ -34,6 +34,7 @@ twice the odds.*/
 reverse_scorecard, /*Specifies whether the generated scorecard points should be reversed. 
 Set to 0 if the higher the event rate the higher the score, and set to 1 if the higher the event rate 
 the lower the score.*/
+eps, /*Adjustment factor to provide a score even when a probability is 0 or 1*/
 /*********************************************************************************/
 /*Output*/
 output_score_dataset /*Output dataset that has the computated scorecard value. The name of the new field is "scorecard".*/
@@ -44,8 +45,8 @@ format scorecard 8.2;
 	set &input_pred_prob_dataset;
 	factor = &point_double_odds. / log(2);
 	offset = &scorecard_points. - factor*log(&odds.);
-	if &reverse_scorecard=0 then scorecard = offset + factor*log(&probability_variable./(1-&probability_variable.));
-	else if &reverse_scorecard=1 then scorecard = offset + factor*log((1-&probability_variable.)/&probability_variable.);
+	if &reverse_scorecard=0 then scorecard = offset + factor*log((&probability_variable.+&eps.)/(1-&probability_variable.+&eps.));
+	else if &reverse_scorecard=1 then scorecard = offset + factor*log((1-&probability_variable.+&eps.)/(&probability_variable.+&eps.));
 run;
 
 %mend transform_prob_to_scorecard;
