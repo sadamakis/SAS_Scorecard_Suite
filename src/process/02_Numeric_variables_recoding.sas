@@ -48,10 +48,10 @@ progPath = programPath /*Macro variable that contains the path where the SAS fil
 
 %include "&programPath.\000_Solution_parameter_configuration.sas";
 
-options compress=yes;
+options compress=yes dlcreatedir;
 
 libname input "&data_path.\input";
-libname output "&data_path.\output";
+libname numrcd "&data_path.\output\02_numeric_recoding";
 
 %include "&macros_path.\numeric_missing.sas";
 %include "&macros_path.\find_1_level_numeric.sas";
@@ -84,7 +84,7 @@ weight_variable = &weight_variable_name., /*Name of weight variable in the input
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
-output_table = output.numeric_missing /*Name of output table that will produce a summary for the missing values*/
+output_table = numrcd.numeric_missing /*Name of output table that will produce a summary for the missing values*/
 );
 
 %find_1_level_numeric(
@@ -97,19 +97,19 @@ weight_variable = &weight_variable_name., /*Name of weight variable in the input
 If there are no weights in the dataset then create a field with values 1 in every row*/
 /*********************************************************************************/
 /*Output*/
-output_table = output.find_1_level_numeric /*Name of output table that will produce a summary for the missing values*/
+output_table = numrcd.find_1_level_numeric /*Name of output table that will produce a summary for the missing values*/
 );
 
 %missing_has_1_level_join(
 /*********************************************************************************/
 /*Input*/
-character_missing_table = output.numeric_missing, /*Output table from numeric_missing macro*/
-has_1_level_table = output.find_1_level_numeric, /*Output table from find_1_level_numeric macro*/
+character_missing_table = numrcd.numeric_missing, /*Output table from numeric_missing macro*/
+has_1_level_table = numrcd.find_1_level_numeric, /*Output table from find_1_level_numeric macro*/
 argument_missing_percent = 99, /*Missing percentage threshold for selecting variables. For selecting all variables, set this to 100*/
 argument_has_1_level = 0, /*Argument for selecting variables that have more than one level. Set this to 0 for selecting variables with more than 1 level*/
 /*********************************************************************************/
 /*Output*/
-output_table = output.numeric_summary /*Output table from the join*/
+output_table = numrcd.numeric_summary /*Output table from the join*/
 );
 
 %replace_numeric_missing_values(
@@ -120,13 +120,13 @@ target_variable = &target_variable_name., /*Name of target variable - leave blan
 id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
 If there are no weights in the dataset then create a field with values 1 in every row*/
-numeric_summary = output.numeric_summary, /*Name of table that contains only the numeric variables that will be in the model*/
+numeric_summary = numrcd.numeric_summary, /*Name of table that contains only the numeric variables that will be in the model*/
 replace_percentage = 5, /*Takes values 0-100. Replace missing values with mean for all variables that missing percentage
 is below this threshold. For numeric variables with missing percentage above this threshold, the missing
 values are left as missing.*/
 /*********************************************************************************/
 /*Output*/
-output_table = output.numeric_vars /*Name of table that will have the target variable, the ID variable, the weight variable and all the numeric variables that will be in the model with missing values replaced*/
+output_table = numrcd.numeric_vars /*Name of table that will have the target variable, the ID variable, the weight variable and all the numeric variables that will be in the model with missing values replaced*/
 );
 
 /*********************************************************************************/
@@ -134,7 +134,7 @@ output_table = output.numeric_vars /*Name of table that will have the target var
 %identify_numeric_variables(
 /*********************************************************************************/
 /*Input*/
-input_table = output.numeric_vars, /*Name of table that has the numeric variables*/
+input_table = numrcd.numeric_vars, /*Name of table that has the numeric variables*/
 target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
 id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
@@ -151,7 +151,7 @@ numeric_contents = numeric_variables_contents /*Name of the table that contain t
 %ivs_and_woe_table(
 /*********************************************************************************/
 /*Input*/
-input_dset = output.Numeric_vars, /*Name of the input dataset that contains the variables to be recoded, the target variable and the weight*/
+input_dset = numrcd.Numeric_vars, /*Name of the input dataset that contains the variables to be recoded, the target variable and the weight*/
 numeric_variables_list = &numeric_variables_to_analyse., /*List of numeric variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
 character_variables_list = , /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
 target_variable = &target_variable_name., /*Name of the target variable*/
@@ -160,15 +160,15 @@ groups = 30, /*Maximum number of binning groups for the numeric variables*/
 adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
 /*********************************************************************************/
 /*Output*/
-inf_val_outds = output.numeric_information_value, /*Dataset with all the information values*/
-woe_format_outds = output.numeric_woe_format_dataset, /*Dataset with the Weight of Evidence variables*/
-output_formatted_data = output.numeric_vars_rcd_format_woe /*Original dataset, but with WOE variables instead of the original variables*/
+inf_val_outds = numrcd.numeric_information_value, /*Dataset with all the information values*/
+woe_format_outds = numrcd.numeric_woe_format_dataset, /*Dataset with the Weight of Evidence variables*/
+output_formatted_data = numrcd.numeric_vars_rcd_format_woe /*Original dataset, but with WOE variables instead of the original variables*/
 );
 
 %NOD_BIN_numeric_wrapper(
 /*********************************************************************************/
 /*Input*/
-input_dset = output.numeric_vars, /*Name of the input dataset that contains the variables we want to recode and the target variable*/
+input_dset = numrcd.numeric_vars, /*Name of the input dataset that contains the variables we want to recode and the target variable*/
 target_variable = &target_variable_name., /*Name of the target variable*/
 id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
@@ -190,15 +190,15 @@ RL_order = A, /* D or A: If D, then the lower value of Y is set to B and the gre
 RL_woeadj = 0.5,  /* space = 0, or 0, or 0.5: Weight of evidence adjusted factor to deal with zero cells*/
 /*********************************************************************************/
 /*Output*/
-output_original_recode_summary = output.num_summary_recode, /*Output table that contains the original with the recoded variables summary (min, max)*/
-output_recode_summary = output.num_vars_recode, /*Output table that contains the code that is used to create the WOE variables from the recoded variables*/ 
-output_recode_data = output.num_vars_format_woe /*Output table that contains the data with the target variable with the WOE variables - this will be used for modelling*/
+output_original_recode_summary = numrcd.num_summary_recode, /*Output table that contains the original with the recoded variables summary (min, max)*/
+output_recode_summary = numrcd.num_vars_recode, /*Output table that contains the code that is used to create the WOE variables from the recoded variables*/ 
+output_recode_data = numrcd.num_vars_format_woe /*Output table that contains the data with the target variable with the WOE variables - this will be used for modelling*/
 );
 
 %identify_numeric_variables(
 /*********************************************************************************/
 /*Input*/
-input_table = output.num_vars_format_woe, /*Name of table that has the numeric variables*/
+input_table = numrcd.num_vars_format_woe, /*Name of table that has the numeric variables*/
 target_variable = &target_variable_name., /*Name of target variable - leave blank if missing*/
 id_variable = &ID_variable_name., /*Name of ID (or key) variable - leave blank if missing*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset. 
@@ -214,7 +214,7 @@ numeric_contents = numeric_woe_contents /*Name of the table that contain the con
 %ivs_and_woe_table(
 /*********************************************************************************/
 /*Input*/
-input_dset = output.num_vars_format_woe, /*Name of the input dataset that contains the variables to be recoded, the target variable and the weight*/
+input_dset = numrcd.num_vars_format_woe, /*Name of the input dataset that contains the variables to be recoded, the target variable and the weight*/
 numeric_variables_list = &numeric_variables_woe., /*List of numeric variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
 character_variables_list = , /*List of character variables to calculate the WOE and the IVs separated by space. This can be left as null.*/
 target_variable = &target_variable_name., /*Name of the target variable*/
@@ -223,9 +223,9 @@ groups = 30, /*Maximum number of binning groups for the numeric variables*/
 adj_fact = 0.5, /*Adjusted factor for weight of evidence*/
 /*********************************************************************************/
 /*Output*/
-inf_val_outds = output.numeric_woe_information_value, /*Dataset with all the information values*/
-woe_format_outds = output.numeric_format_dataset_woe, /*Dataset with the Weight of Evidence variables*/
-output_formatted_data = output.numeric_rcd_format_woe /*Original dataset, but with WOE variables instead of the original variables*/
+inf_val_outds = numrcd.numeric_woe_information_value, /*Dataset with all the information values*/
+woe_format_outds = numrcd.numeric_format_dataset_woe, /*Dataset with the Weight of Evidence variables*/
+output_formatted_data = numrcd.numeric_rcd_format_woe /*Original dataset, but with WOE variables instead of the original variables*/
 );
 
 proc printto;
