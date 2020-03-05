@@ -117,7 +117,7 @@ numeric_contents = numeric_variables_contents /*Name of the table that contain t
 /*Input*/
 input_dset = output.num_char_merge, /*The name of the dataset that contain all the numeric variables*/
 numeric_vars = &numeric_variables_to_analyse., /*List of numeric variables that should be reduced*/
-maxeigen = 0.2, /*Argument in PROC VARCLUS. The largest permissible value of the second eigenvalue in each cluster. 
+maxeigen = 0.5, /*Argument in PROC VARCLUS. The largest permissible value of the second eigenvalue in each cluster. 
 The lower the value	the more splits will be performed.*/
 target_variable = &target_variable_name., /*The name of the dependent variable (it should be binary)*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
@@ -638,7 +638,7 @@ numeric_contents = numeric_variables_contents /*Name of the table that contain t
 /*Input*/
 input_dset = output.numeric_vars_min, /*The name of the dataset that contain all the numeric variables*/
 numeric_vars = &numeric_variables_to_analyse., /*List of numeric variables that should be reduced*/
-maxeigen = 0.2, /*Argument in PROC VARCLUS. The largest permissible value of the second eigenvalue in each cluster. 
+maxeigen = 0.5, /*Argument in PROC VARCLUS. The largest permissible value of the second eigenvalue in each cluster. 
 The lower the value	the more splits will be performed.*/
 target_variable = &target_variable_name., /*The name of the dependent variable (it should be binary)*/
 weight_variable = &weight_variable_name., /*Name of weight variable in the input dataset. This should exist in the dataset.*/
